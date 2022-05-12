@@ -26,26 +26,39 @@ low.registerLanguage("solidity", hljsSolidity.solidity);
 
 export interface Props {
   source: Sources.Source;
-  selectedLineNumber?: number;
+  currentSourceRange?: Sources.SourceRange;
 }
 
 const Source = ({
   source,
-  selectedLineNumber
+  currentSourceRange
 }: Props) => {
   const { id, sourcePath, contents } = source;
   const [scrollTop, setScrollTop] = useState(0);
   const sourceRef = useRef<HTMLDivElement>(null);
 
-  const processor = unified().use(stringify);
-  const highlightedSource = processor
-    .stringify({
-      type: "root",
-      children: low.highlight("solidity", contents).value
-    } as any)
-    .toString();
+  const [highlightedSource, setHighlightedSource] =
+    useState<string | undefined>();
 
-  console.debug("highlightedSource: %s", highlightedSource);
+  useEffect(() => {
+    Promise.resolve().then(() => {
+      const processor = unified().use(stringify);
+      setHighlightedSource(
+        processor
+        .stringify({
+          type: "root",
+          children: low.highlight("solidity", contents).value
+        } as any)
+        .toString()
+      );
+    });
+  }, [contents]);
+
+  if (!highlightedSource) {
+    return <p>Highlighting source...</p>;
+  }
+
+  console.debug("highlightedSource %s", highlightedSource);
   const lines = highlightedSource.split("\n");
 
   // width of the gutter equals width of the longest line number
@@ -62,11 +75,20 @@ const Source = ({
 
   const sourceLines = lineRefs.map((lineRef, index) => {
     const line = lines[index];
+    const selected = (
+      !!currentSourceRange &&
+      index >= currentSourceRange.start.line && (
+        currentSourceRange.end.line === null ||
+        index <= currentSourceRange.end.line
+      )
+    );
+
     return <SourceLine
       source={source}
       lineContents={line}
       lineNumber={index}
       key={`${id}-line-${index}`}
+      selected={selected}
       lineRef={lineRef}
       lineNumbersGutterWidth={lineNumbersGutterWidth}
     />;

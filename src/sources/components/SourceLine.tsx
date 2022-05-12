@@ -9,14 +9,14 @@ export const backgroundHighlight = Colors.YELLOW_200;
 export const borderHighlight = Colors.ORANGE_300;
 
 interface HighlightProps {
-  isCurrent: boolean;
+  selected: boolean;
 }
 
 const Row = styled.div`
-  background: ${({ isCurrent }: HighlightProps) =>
-    isCurrent ? `${backgroundHighlight}` : `${backgroundInherit}`};
-  border-color: ${({ isCurrent }: HighlightProps) =>
-    isCurrent ? `${borderHighlight}` : `${backgroundInherit}`};
+  background: ${({ selected }: HighlightProps) =>
+    selected ? `${backgroundHighlight}` : `${backgroundInherit}`};
+/*border-color: ${({ selected }: HighlightProps) =>
+    selected ? `${borderHighlight}` : `${backgroundInherit}`};*/
   border-width: 1px;
   border-style: solid;
   border-radius: 0.4rem;
@@ -63,6 +63,7 @@ export interface Props {
   lineNumber: number;
   key: string;
   lineRef: React.RefObject<HTMLDivElement>;
+  selected: boolean;
   lineNumbersGutterWidth: number;
 }
 
@@ -71,6 +72,7 @@ const SourceLine = ({
   lineContents,
   lineNumber,
   lineRef,
+  selected,
   lineNumbersGutterWidth,
 }: Props) => {
   const displayLineNumber = (lineNumber + 1).toString();
@@ -83,7 +85,7 @@ const SourceLine = ({
   return (
     <Row
       key={`contract-source-${lineNumber}`}
-      isCurrent={false}
+      selected={selected}
       ref={lineRef}
     >
       <LineContainer>

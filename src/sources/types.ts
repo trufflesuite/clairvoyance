@@ -5,3 +5,15 @@ export interface Source {
   language: string;
 }
 
+export interface SourceRange {
+  traceIndex: number;
+  source: { id: string };
+  start: {
+    line: number;
+    column: number;
+  };
+  end: {
+    line: number | null;
+    column: number | null;
+  }
+}
