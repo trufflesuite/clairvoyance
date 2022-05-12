@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prepare": "next build && next export && rm -rf ./docs && mv ./out ./docs && cp ./transaction-insight-guide.html ./docs/transaction-insight-guide.html"
   },
   "dependencies": {
     "@ethereumjs/common": "^2.6.4",

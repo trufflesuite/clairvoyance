@@ -29,6 +29,7 @@ export function TransactionDecoding({ options, from, tx, network }: any) {
   const [result, setResult] = useState<{} | void>();
   const [events, setEvents] = useState<any[] | void>();
   const [opCode, setOpcode] = useState<{}  | void>();
+  const [resultPending, setResultPending] = useState<boolean>(false);
 
   const [hasError, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -77,8 +78,9 @@ export function TransactionDecoding({ options, from, tx, network }: any) {
           const params = transformTxDecoding(_decoding?.arguments);
           setDecoding(params);
         }
-
-        if (!result) {
+        
+        if (!resultPending) {
+          setResultPending(true);
           const subId = await provider.request({method: "eth_subscribe", params: ["logs"]});
           provider.on("message", (event) => {
             const _events = events || [];
@@ -92,6 +94,8 @@ export function TransactionDecoding({ options, from, tx, network }: any) {
 
           const j = tx.toJSON();
           j.from = from;
+          // protect against sending transactions with a too-high nonce (which will never complete)
+          j.nonce = undefined;
           const hash = await provider.request({method: "eth_sendTransaction", params: [j]});
           const _result = await provider.request({method: "eth_getTransactionReceipt", params: [hash]});
           await provider.request({method: "eth_unsubscribe", params: [subId]});
