@@ -4,9 +4,9 @@ import styles from '../styles/Home.module.css'
 import {TransactionFactory} from "@ethereumjs/tx";
 import { useRouter } from 'next/router'
 import Common from '@ethereumjs/common';
-import { Clairvoyance } from '../components/clairvoyance/clairvoyance.component';
+import { Clairvoyance } from 'src/clairvoyance/clairvoyance.component';
 import { ParsedUrlQuery } from 'querystring';
-import { Options } from '../components/types/types';
+import { Options } from 'src/types/types';
 
 function getOptions(query: ParsedUrlQuery): Options{
   let options = {} as unknown as Options;
@@ -26,7 +26,7 @@ function getOptions(query: ParsedUrlQuery): Options{
           comment: "Local test network fork"
         }
       );
-      
+
       options.tx = TransactionFactory.fromTxData(tx, {common});
       options.from = tx.from;
       options.networkId = networkId;
@@ -59,7 +59,7 @@ const Home: NextPage = () => {
   }
 
   const options = getOptions(router.query);
-  
+
   return (
     <div suppressHydrationWarning={true} className={styles.container}>
       <Head>
