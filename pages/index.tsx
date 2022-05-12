@@ -60,7 +60,6 @@ const Home: NextPage = () => {
 
   const options = getOptions(router.query);
   
-  console.log("init Home");
   return (
     <div suppressHydrationWarning={true} className={styles.container}>
       <Head>
