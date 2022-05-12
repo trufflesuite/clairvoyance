@@ -7,7 +7,7 @@ export interface UseVariablesOptions {
   session?: Debugger.Session;
 }
 
-export enum VariablesStatus {
+export enum Status {
   Waiting = "waiting",
   Pending = "pending",
   Ready = "ready",
@@ -17,11 +17,11 @@ export enum VariablesStatus {
 export type UseVariablesResult =
   | {
       variables: Debugger.Variables;
-      status: VariablesStatus.Ready;
+      status: Status.Ready;
     }
   | {
       variables?: undefined;
-      status: Exclude<VariablesStatus, VariablesStatus.Ready>;
+      status: Exclude<Status, Status.Ready>;
     };
 
 export const useVariables = ({
@@ -41,15 +41,13 @@ export const useVariables = ({
     }
   }, [session, mutate]);
 
-  const status = !session
-    ? VariablesStatus.Waiting
-    : !!data
-      ? VariablesStatus.Ready
-      : !!error
-        ? VariablesStatus.Failed
-        : VariablesStatus.Pending;
+  const status =
+    !session ? Status.Waiting
+    : error ? Status.Failed
+    : data ? Status.Ready
+    : Status.Pending;
 
-  if (status === VariablesStatus.Ready) {
+  if (status === Status.Ready) {
     return {
       variables: data as Debugger.Variables,
       status
