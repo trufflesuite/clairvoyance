@@ -22,8 +22,7 @@ async function fetchWithCache(url: string): Promise<any> {
   return fetch(url).then(response => response.json());
 }
 
-export function TransactionDecoding({ options, tx, network }: any) {
-  const from = tx.getSenderAddress().toString("hex");
+export function TransactionDecoding({ options, from, tx, network }: any) {
   const {to, data} = tx.toJSON();
 
   const [decoding, setDecoding] = useState<[] | void>();
@@ -39,7 +38,7 @@ export function TransactionDecoding({ options, tx, network }: any) {
     (async () => {
       try {
         // decode tx input data
-        if(!decoding){
+        if (!decoding) {
           const networks = await fetchWithCache(FETCH_SUPPORTED_NETWORKS_URI);
 
           if (
@@ -80,7 +79,6 @@ export function TransactionDecoding({ options, tx, network }: any) {
         }
 
         if (!result) {
-          const raw = (tx as BaseTransaction<any>).serialize();
           const subId = await provider.request({method: "eth_subscribe", params: ["logs"]});
           provider.on("message", (event) => {
             const _events = events || [];
@@ -92,8 +90,10 @@ export function TransactionDecoding({ options, tx, network }: any) {
             setOpcode(event.data.opcode);
           });
 
-          const hash = await provider.request({method: "eth_sendRawTransaction", params: [`0x${raw.toString("hex")}`]});
-          const _result = await provider.request({method: "eth_getTransactionByHash", params: [hash]});
+          const j = tx.toJSON();
+          j.from = from;
+          const hash = await provider.request({method: "eth_sendTransaction", params: [j]});
+          const _result = await provider.request({method: "eth_getTransactionReceipt", params: [hash]});
           await provider.request({method: "eth_unsubscribe", params: [subId]});
           setResult(_result as any)
         }
@@ -217,9 +217,17 @@ export function TransactionDecoding({ options, tx, network }: any) {
 
     return (
       <div className="tx-insight-content">
+        {/* replace below */}
+        {/* move opCode to own component */}
         <div>{opCode ? JSON.stringify(opCode) : ""}</div>
+        
+        {/* move events to own component */}
         <div>{events ? JSON.stringify(events) : ""}</div>
+
+        {/* move result own component */}
         <div>{JSON.stringify(result)}</div>
+        {/* replace above */}
+
         <div className="tx-insight-content__tree-component">
           <ol>{decoding? decoding!.map(renderTree) : ""}</ol>
         </div>
@@ -243,6 +251,7 @@ export function TransactionDecoding({ options, tx, network }: any) {
 
 TransactionDecoding.propTypes = {
   tx: PropTypes.object.isRequired,
-  network: PropTypes.string.isRequired,
+  from: PropTypes.string.isRequired,
+  network: PropTypes.number.isRequired,
   options: PropTypes.object.isRequired
 };

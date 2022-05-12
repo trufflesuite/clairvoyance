@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ethereumjs/common": "^2.6.4",
     "@ethereumjs/tx": "^3.5.1",
     "@metamask/etherscan-link": "^2.1.0",
     "@truffle/decoder": "^5.2.11",

@@ -4,6 +4,7 @@ import styles from '../styles/Home.module.css'
 import { TransactionDecoding } from "../components/transaction-decoding"
 import {TransactionFactory} from "@ethereumjs/tx";
 import { useRouter } from 'next/router'
+import Common from '@ethereumjs/common';
 
 
 const Home: NextPage = () => {
@@ -12,14 +13,43 @@ const Home: NextPage = () => {
     return (<div className={styles.container}>Loading... </div>);
   }
 
-  let options;
+  let options: any = {view: null};
   try {
-    options = JSON.parse(router.query.q as string);
-    if (options.raw) {
-      options.tx = TransactionFactory.fromSerializedData(Buffer.from(options.raw.slice(2), "hex"));
+    const tx = JSON.parse(router.query.tx as string);
+    if (tx) {
+      const KNOWN_CHAINIDS = new Set([1, 3, 4, 5, 42, 11155111]);
+      const chainId = parseInt(router.query.chainId as string);
+      const networkId = parseInt(router.query.networkId as string);
+      const common = Common.forCustomChain(
+        KNOWN_CHAINIDS.has(chainId) ? chainId : 1,
+        {
+          name: "ganache-fork",
+          defaultHardfork: "london",
+          networkId,
+          chainId,
+          comment: "Local test network fork"
+        }
+      );
+      
+      options.tx = TransactionFactory.fromTxData(tx, {common});
+      options.from = tx.from;
+      options.networkId = networkId;
+      options.options = {
+        fork: {
+          url: router.query.rpcUrl as string,
+          blockNumber: parseInt(router.query.blockNumber as string),
+        },
+        chain: {
+          chainId,
+          networkId,
+        },
+        wallet: {
+          unlockedAccounts: [tx.from]
+        }
+      }
     }
   } catch(e) {
-    options = {};
+    console.error(e)
   }
   
   
@@ -28,8 +58,8 @@ const Home: NextPage = () => {
       <Head>
         <title>Clairvoyance</title>
       </Head>
-      {options.view === "simulate" ? 
-        (<TransactionDecoding options={options.options} tx={options.tx} network={options.network} />)
+      {options.tx ? 
+        (<TransactionDecoding from={options.from} options={options.options} tx={options.tx} network={options.networkId} />)
         :
         <div>TODO</div>
       }
