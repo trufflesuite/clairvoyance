@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "next build && next export && cp ./transaction-insight-guide.html ./out/transaction-insight-guide.html"
+    "ready": "next build && next export && cp ./transaction-insight-guide.html ./out/transaction-insight-guide.html"
   },
   "dependencies": {
     "@chakra-ui/react": "^1.8.8",
