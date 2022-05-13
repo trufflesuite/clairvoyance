@@ -30,6 +30,9 @@ function getOptions(query: ParsedUrlQuery): Options{
           comment: "Local test network fork"
         }
       );
+      // make sure we can handle both ways
+      tx.data = tx.data || tx.input;
+      tx.gasLimit = tx.gasLimit || tx.gas;
 
       options.tx = TransactionFactory.fromTxData(tx, {common});
       options.from = tx.from;

@@ -20,14 +20,17 @@ export function TransactionSimulation({ compilations, provider, tx, from, networ
   ])).filter((address: string) => !!address) : [];
 
   const decoderOptions = {provider, addresses, compilations, networkId};
-  const {decoder} = useDecoder(decoderOptions);
+  const {decoder, error: error2} = useDecoder(decoderOptions);
 
   if (unsubscribe && receipt) {
     unsubscribe();
   }
 
   if (error) {
-    return <Chakra.FormErrorMessage>{error.message}</Chakra.FormErrorMessage>
+    return <div>Transaction Error: {error.message}</div>
+  }
+  if (error2) {
+    return <div>Decoder Error: {error2.message}</div>
   }
 
   return (<div>

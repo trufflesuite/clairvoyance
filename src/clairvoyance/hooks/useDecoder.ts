@@ -15,17 +15,23 @@ export const useDecoder = ({provider, addresses, compilations, networkId}: Decod
   const { data, error, mutate } = useSWR("/decoder-" + addresses.join("-"), async () => {
     if (!provider) return;
 
-    const addressPromises = addresses.map(async (address) => {
-      const requestUrl = `${FETCH_PROJECT_INFO_URI}?${new URLSearchParams({
-        address,
-        'network-id': BigInt(networkId).toString(),
-      })}`;
+    const allCompilations = [...compilations];
+    // we do these one at a time because my server can't handle more than that lol
+    for (let address of addresses) {
+      try {
+        const requestUrl = `${FETCH_PROJECT_INFO_URI}?${new URLSearchParams({
+          address,
+          'network-id': BigInt(networkId).toString(),
+        })}`;
 
-      return await fetchJson(requestUrl);
-    });
-    const results = (await Promise.all(addressPromises));
-
-    const allCompilations= [...compilations, ...results.flatMap((result) => result.compileResult.compilations)];
+        const result = await fetchJson(requestUrl)
+        if (result && result.compileResult && result.compileResult.compilations) {
+          allCompilations.push.apply(allCompilations, result.compileResult.compilations);
+        }
+      } catch(e){
+        console.error(e);
+      }
+    }
 
     // creating instance of the truffle decoder
     const decoder = await forProject({
@@ -45,6 +51,7 @@ export const useDecoder = ({provider, addresses, compilations, networkId}: Decod
   }, [provider]);
 
   return {
+    error,
     compilations: data?.compilations || [],
     decoder: data?.decoder || null,
   };

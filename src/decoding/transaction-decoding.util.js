@@ -1,7 +1,7 @@
 // *********************************************
 // data transformation utils
 // *********************************************
-export const transformTxDecoding = (params) => {
+export const transformTxDecoding = (params = []) => {
   return params.map((node) => {
     const nodeName = node.name;
     const nodeValue = node.value;
