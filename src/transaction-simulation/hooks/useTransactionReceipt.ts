@@ -1,4 +1,6 @@
 import { BaseTransaction } from "@ethereumjs/tx/dist/baseTransaction";
+import { EthereumProvider } from "ganache";
+import { useEffect } from "react";
 import useSWR from "swr/immutable";
 
 function makeTx(from: string, baseTx: BaseTransaction<any>): any {
@@ -12,11 +14,18 @@ function makeTx(from: string, baseTx: BaseTransaction<any>): any {
   return tx;
 }
 
-export const useTransactionReceipt = ({provider, tx, from}: any) => {
-  const {data, error} = useSWR("/transaction-receipt", async () => {
+export const useTransactionReceipt = ({provider, tx, from}: {provider: EthereumProvider | null, tx: any, from: string}) => {
+  const {data, error, mutate} = useSWR("/transaction-receipt", async () => {
+    if (!provider) return;
     const hash = await provider.request({method: "eth_sendTransaction", params: [makeTx(from, tx)]});
     return await provider.request({method: "eth_getTransactionReceipt", params: [hash]});
   });
+
+  useEffect(() => {
+    if (provider) {
+      mutate();
+    }
+  }, [provider]);
 
   return {
     receipt: data,

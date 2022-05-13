@@ -6,14 +6,40 @@ import { TransactionDetails} from "../transaction-details/transaction-details.co
 import { Options } from '../types/types';
 import { useGanache } from './hooks/useGanache';
 import { useDecoder } from './hooks/useDecoder';
+import { Debugger } from "src/debugger";
+import { useProgress } from "src/transaction-simulation/hooks/useProgress";
+import { useTransactionReceipt } from "src/transaction-simulation/hooks/useTransactionReceipt";
+import { fetchCompilations } from "src/decoding/fetchCompilations";
 
 export function Clairvoyance({ options }: {options: Options}){
   const {provider} = useGanache(options.options);
   const decoderOptions = {provider, addresses: [options.to], compilations: [], networkId: options.networkId};
   const {decoder, compilations} = useDecoder(decoderOptions);
 
+  const {progress, unsubscribe} = useProgress({provider});
+  const {receipt, error} = useTransactionReceipt({provider, tx: options.tx, from: options.from})
+
+  const addresses: string[] = receipt ? Array.from(new Set([
+    receipt.contractAddress,
+    ...receipt.logs.map((log: any) => log.address)
+  ])).filter((address: string) => !!address) : [];
+
+  const eventDecoderOptions = {provider, addresses, compilations, networkId: options.networkId};
+  const {decoder: eventDecoder, error: error2} = useDecoder(eventDecoderOptions);
+
   if (!provider) {
     return <div>Loading...</div>
+  }
+
+  if (unsubscribe && receipt) {
+    unsubscribe();
+  }
+
+  if (error) {
+    return <div>Transaction Error: {error.message}</div>
+  }
+  if (error2) {
+    return <div>Decoder Error: {error2.message}</div>
   }
 
   return (
@@ -32,10 +58,10 @@ export function Clairvoyance({ options }: {options: Options}){
         </Chakra.TabList>
         <Chakra.TabPanels>
           <Chakra.TabPanel>
-            <TransactionSimulation networkId={options.networkId} from={options.from} tx={options.tx} compilations={compilations} provider={provider} />
+            <TransactionSimulation progress={progress} decoder={eventDecoder} receipt={receipt} />
           </Chakra.TabPanel>
           <Chakra.TabPanel>
-            Debug panel
+            {receipt && receipt.transactionHash ? <Debugger fetchCompilations={fetchCompilations.bind(null, options.networkId)} provider={provider} transactionHash={receipt.transactionHash} /> : <Chakra.CircularProgress isIndeterminate />}
           </Chakra.TabPanel>
         </Chakra.TabPanels>
       </Chakra.Tabs>
