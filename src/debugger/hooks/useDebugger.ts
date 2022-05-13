@@ -75,7 +75,7 @@ export const useDebugger = ({
 
 interface InitializeDebuggerOptions {
   transactionHash: string;
-  provider: Provider;
+  provider: EthereumProvider;
 }
 
 async function initializeDebugger({

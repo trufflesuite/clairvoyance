@@ -74,9 +74,11 @@ const Controls = ({
           disabled={shouldDisable({ isStepping, isAtStart, isAtEnd })}
           onClick={() => {
             setIsStepping(true);
-            step()
-              .then(refresh)
-              .then(() => { setIsStepping(false); });
+            setTimeout(async () => {
+              await step();
+              refresh();
+              setIsStepping(false);
+            }, 0);
           }}
         />
       </Chakra.Tooltip>

@@ -31,7 +31,11 @@ export const useSources = ({
       return;
     }
 
-    return session.view($.sourcemapping.views.sources);
+    await new Promise(accept => setTimeout(accept, 0));
+
+    const sources = session.view($.sourcemapping.views.sources);
+    console.debug("sources %o", Object.values(sources).map(({ sourcePath }: any) => sourcePath));
+    return sources;
   });
 
   useEffect(() => {
