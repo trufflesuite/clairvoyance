@@ -29,7 +29,7 @@ const Debugger = ({
     return <p>Loading debugger...</p>;
   }
 
-  return <Chakra.Box width="100%" height="100%">
+  return <Chakra.Box width="100%">
     <Controls session={session} />
     <Sources session={session} />
   </Chakra.Box>

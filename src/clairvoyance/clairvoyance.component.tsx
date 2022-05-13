@@ -61,13 +61,18 @@ export function Clairvoyance({ options }: {options: Options}){
             <TransactionSimulation progress={progress} decoder={eventDecoder} receipt={receipt} />
           </Chakra.TabPanel>
           <Chakra.TabPanel>
-            {receipt && receipt.transactionHash ? <Debugger fetchCompilations={fetchCompilations.bind(null, options.networkId)} provider={provider} transactionHash={receipt.transactionHash} /> : <Chakra.CircularProgress isIndeterminate />}
+            {receipt && receipt.transactionHash ?
+              <Chakra.Box width="100%"
+                >
+                  <Debugger fetchCompilations={fetchCompilations.bind(null, options.networkId)} provider={provider} transactionHash={receipt.transactionHash} />
+              </Chakra.Box>
+            : <Chakra.CircularProgress isIndeterminate />}
           </Chakra.TabPanel>
         </Chakra.TabPanels>
       </Chakra.Tabs>
     </Chakra.Box>
   );
-}
+} 
 
 Clairvoyance.propTypes = {
   options: PropTypes.object.isRequired

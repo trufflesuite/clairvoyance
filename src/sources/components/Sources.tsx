@@ -66,7 +66,6 @@ const Sources = ({
 
   return (
     <Chakra.Tabs
-      height="100%"
       index={tabIndex}
       onChange={(index) => {
         setTraceIndexAtTabChange(currentTraceIndex);
@@ -89,9 +88,9 @@ const Sources = ({
         )}
       </Chakra.TabList>
 
-      <Chakra.TabPanels height="100%">
+      <Chakra.TabPanels>
         {sources.map(source =>
-          <Chakra.TabPanel key={source.id} height="100%">
+          <Chakra.TabPanel key={source.id}>
             {currentSourceRange && currentSourceRange.source.id === source.id
               ? <Source source={source} currentSourceRange={currentSourceRange} />
               : <Source source={source} />

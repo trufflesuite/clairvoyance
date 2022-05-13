@@ -98,9 +98,9 @@ const Source = ({
     />;
   });
 
-  return <Chakra.Box height="100%">
+  return <Chakra.Box>
     <Chakra.Heading>{sourcePath}</Chakra.Heading>
-    <Chakra.Box height="100%" overflow="scroll">
+    <Chakra.Box height="75vh" overflow="scroll">
       <SyntaxStyle>{sourceLines}</SyntaxStyle>
     </Chakra.Box>
   </Chakra.Box>;
