@@ -1,19 +1,14 @@
 import { useEffect, useState } from "react";
+import type { EthereumProvider } from "ganache";
 
 import * as Codec from "@truffle/codec";
 import * as TruffleDebugger from "@truffle/debugger";
 
-import { Session } from "../types";
-
-
-type Provider = any;
-type Compilation = any;
-
-type FetchCompilations = (address: string) => Promise<Compilation[]>;
+import type { Session, FetchCompilations } from "../types";
 
 export interface UseDebuggerOptions {
   transactionHash: string;
-  provider: Provider;
+  provider: EthereumProvider;
   fetchCompilations: FetchCompilations;
 }
 
