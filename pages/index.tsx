@@ -37,6 +37,7 @@ function getOptions(query: ParsedUrlQuery): Options{
       options.chainId = chainId;
       options.to = options.tx.to!.toString();
       options.options = {
+        logging: {logger:{log: () => {}}},
         fork: {
           url: query.rpcUrl as string,
           blockNumber: parseInt(query.blockNumber as string),
@@ -46,7 +47,11 @@ function getOptions(query: ParsedUrlQuery): Options{
           networkId,
         },
         wallet: {
+          totalAccounts: 0,
           unlockedAccounts: [tx.from]
+        },
+        miner: {
+          timestampIncrement: 8 // seconds
         }
       }
     }

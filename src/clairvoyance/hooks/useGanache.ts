@@ -1,9 +1,9 @@
-import Ganache, { EthereumProvider } from "ganache";
+import Ganache from "ganache";
 import useSWR from "swr/immutable";
 
 export const useGanache = (ganacheOptions: any) => {
-  const { data, error, mutate } = useSWR("/provider", async () => {
-    return Ganache.provider({logging:{logger:{log: () => {}}}, ...ganacheOptions});
+  const { data, error } = useSWR("/provider", async () => {
+    return Ganache.provider(ganacheOptions);
   });
   if (error) {
     throw new Error(error);

@@ -1,6 +1,8 @@
+import * as Chakra from "@chakra-ui/react";
 import { BaseTransaction } from '@ethereumjs/tx/dist/baseTransaction';
 import { Compilation } from '@truffle/compile-common';
 import { ProjectDecoder } from '@truffle/decoder';
+import { errorMonitor } from 'events';
 import { EthereumProvider } from 'ganache';
 import { useDecoder } from '../clairvoyance/hooks/useDecoder';
 import { Events } from '../events/events.component';
@@ -10,7 +12,7 @@ import { useTransactionReceipt } from './hooks/useTransactionReceipt';
 
 export function TransactionSimulation({ compilations, provider, tx, from, networkId }: {networkId: number, compilations: Compilation[], provider: EthereumProvider, tx: BaseTransaction<any>, from: string}) {
   const {progress, unsubscribe} = useProgress({provider});
-  const {receipt} = useTransactionReceipt({provider, tx, from})
+  const {receipt, error} = useTransactionReceipt({provider, tx, from})
 
   const addresses: string[] = receipt ? Array.from(new Set([
     receipt.contractAddress,
@@ -22,6 +24,10 @@ export function TransactionSimulation({ compilations, provider, tx, from, networ
 
   if (unsubscribe && receipt) {
     unsubscribe();
+  }
+
+  if (error) {
+    return <Chakra.FormErrorMessage>{error.message}</Chakra.FormErrorMessage>
   }
 
   return (<div>
