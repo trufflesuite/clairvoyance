@@ -4,9 +4,9 @@ import styles from '../styles/Home.module.css'
 import {TransactionFactory} from "@ethereumjs/tx";
 import { useRouter } from 'next/router'
 import Common from '@ethereumjs/common';
-import { Clairvoyance } from 'src/clairvoyance/clairvoyance.component';
+import { Clairvoyance } from '../src/clairvoyance/clairvoyance.component';
 import { ParsedUrlQuery } from 'querystring';
-import { Options } from 'src/types/types';
+import { Options } from '../src/types/types';
 
 function getOptions(query: ParsedUrlQuery): Options{
   let options = {} as unknown as Options;
