@@ -45,7 +45,7 @@ export const useDecoder = ({provider, addresses, compilations, networkId}: Decod
   }, [provider]);
 
   return {
-    compilations: data?.compilations || null,
+    compilations: data?.compilations || [],
     decoder: data?.decoder || null,
   };
 };

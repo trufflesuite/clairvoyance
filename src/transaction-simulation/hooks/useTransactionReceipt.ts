@@ -10,20 +10,16 @@ function makeTx(from: string, baseTx: BaseTransaction<any>): any {
 }
 
 export const useTransactionReceipt = ({provider, tx, from}: any) => {
-  function removeMessageListener(fn: any){
-    return provider.off("message", fn);
-  }
-
   const {data} = useSWR("/transaction-receipt", async () => {
     const blockSub = await provider.request({method: "eth_subscribe", params: ["newHeads"]});
     const blockProm = new Promise<void>(resolve => {
       function handleMessage (event: any) {
         if (event.type === "eth_subscription" && event.data.subscription === blockSub) {
           resolve();
-          removeMessageListener(handleMessage);
+          unsub();
         }
       }
-      provider.on("message", handleMessage);
+      const unsub = provider.on("message", handleMessage);
     });
     
     const forkBlockNumber = `0x${provider.getOptions().fork.blockNumber.toString(16)}`;
