@@ -11,26 +11,33 @@ export function TransactionDetails({ options, from, tx, provider }: any) {
   let gasFee = undefined,
     totalCost = undefined;
   if (block !== undefined) {
-    const maxGasFee = Math.min(parseInt(block.baseFeePerGas) + parseInt(tx.maxPriorityFeePerGas), parseInt(tx.maxFeePerGas));
+    const maxGasFee = parseInt(block.baseFeePerGas);
     gasFee = maxGasFee * parseInt(tx.gasLimit);
-    totalCost = gasFee + parseInt(tx.value)
+    totalCost = gasFee + parseInt(tx.value);
   }
 
-  const networkId: string = options.chain.networkId;
-  const networkName = NETWORK_TO_NAME_MAP[networkId];
-  const tokenName = networkId === MAINNET_NETWORK_ID ? "Eth": `${networkName}Eth`;
-  
+  const networkId: string = options.chain.networkId,
+    chainId: string = "0x" + options.chain.chainId.toString(16),
+    nonce = "0x" + tx.nonce.toString(16),
+    networkName = NETWORK_TO_NAME_MAP[networkId],
+    tokenName = networkId === MAINNET_NETWORK_ID ? "Eth": `${networkName}Eth`,
+    to = tx.to === undefined ?"Contract deploy" : tx.to.toString(),
+    blockNumber = formatBlockNumber(options.fork.blockNumber),
+    amount = formatCurrency(parseInt(tx.value), tokenName),
+    gasFeeValue = gasFee === undefined? "Loading..." : formatCurrency(gasFee, tokenName),
+    totalCostValue = totalCost === undefined? "Loading..." : formatCurrency(totalCost, tokenName);
+
   const values = {
-    to: tx.to.toString(),
+    to,
     from,
     networkName,
     networkId,
-    nonce:`0x${tx.nonce.toString(16)}`,
-    chainId: `0x${tx.chainId.toString("hex")}`,
-    blockNumber: formatBlockNumber(options.fork.blockNumber),
-    amount: formatCurrency(parseInt(tx.value), tokenName),
-    gasFee: gasFee === undefined? "Loading..." : formatCurrency(gasFee, tokenName),
-    totalCost: totalCost === undefined? "Loading..." : formatCurrency(totalCost, tokenName)
+    nonce,
+    chainId,
+    blockNumber,
+    amount,
+    gasFeeValue,
+    totalCostValue
   };
 
   return <Box className={styles.transactionDetails}>
@@ -45,8 +52,8 @@ export function TransactionDetails({ options, from, tx, provider }: any) {
     <Box className={styles.header}>Transaction</Box>
     <TransactionBreakdownRow label="Nonce" value={values.nonce} />
     <TransactionBreakdownRow label="Amount" value={values.amount} />
-    <TransactionBreakdownRow label="Gas fee (maximum)" value={values.gasFee} />
-    <TransactionBreakdownRow label="Total" value={values.totalCost} />
+    <TransactionBreakdownRow label="Gas fee (maximum)" value={values.gasFeeValue} />
+    <TransactionBreakdownRow label="Total" value={values.totalCostValue} />
     
     <Box className={styles.header}>Data</Box>
     <Text fontSize="sm" className={styles.dataBlock}>0x{tx.data}</Text>
