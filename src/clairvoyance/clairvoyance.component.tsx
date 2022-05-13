@@ -2,9 +2,11 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { TransactionDecoding } from "../decoding";
 import { TransactionSimulation } from '../transaction-simulation/transaction-simulation.component';
+import { TransactionDetails} from "../transaction-details/transaction-details.component"
 import { Options } from '../types/types';
 import { useGanache } from './hooks/useGanache';
 import { useDecoder } from './hooks/useDecoder';
+
 
 export function Clairvoyance({ options }: {options: Options}){
   const [tab, setTab] = useState<"simulation" | "debug">("simulation");
@@ -17,6 +19,7 @@ export function Clairvoyance({ options }: {options: Options}){
 
   return (
     <div className="tx-insight">
+      <TransactionDetails options={options.options} from={options.from} tx={options.tx}/>
       <TransactionDecoding decoder={decoder} provider={provider} options={options.options} from={options.from} tx={options.tx} networkId={options.networkId} />
       <div className="tabs">
         <div className="tab-container>">

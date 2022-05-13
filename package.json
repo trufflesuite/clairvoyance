@@ -10,6 +10,7 @@
     "prepare": "next build && next export && cp ./transaction-insight-guide.html ./out/transaction-insight-guide.html"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^2.0.0",
     "@chakra-ui/react": "^1.8.8",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
@@ -24,8 +25,8 @@
     "axios": "^0.27.2",
     "browser-util-inspect": "^0.2.0",
     "copy-to-clipboard": "^3.3.1",
-    "ethereum-public-key-to-address": "^0.0.5",
     "framer-motion": "^6",
+    "ethereum-public-key-to-address": "^0.0.5",
     "ganache": "7.1.0-clairvoyance.4",
     "highlightjs-solidity": "^2.0.5",
     "lowlight": "^1",
@@ -46,6 +47,7 @@
     "@types/react-dom": "18.0.3",
     "eslint": "8.15.0",
     "eslint-config-next": "12.1.6",
+    "sass": "^1.51.0",
     "typescript": "4.6.4"
   }
 }

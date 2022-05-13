@@ -1,0 +1,25 @@
+.header {
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.parties div {
+  text-overflow:ellipsis;
+  overflow:hidden;
+  word-wrap:normal;
+}
+.icon {
+  text-align:center;
+}
+.transactionDetails {
+  width:800px;
+  margin:10px auto;
+  padding:10px;
+  box-shadow: 4px 4px 4px #eee;
+  border: 1px solid #666;
+}
+.transactionDetails div {
+  text-overflow:ellipsis;
+  overflow:hidden;
+  word-wrap:normal;
+}
