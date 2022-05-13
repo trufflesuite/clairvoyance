@@ -94,10 +94,10 @@ const Source = ({
     />;
   });
 
-  return <Chakra.Container minWidth="100%">
+  return <Chakra.Box>
     <Chakra.Heading>{sourcePath}</Chakra.Heading>
-    <SyntaxStyle>{sourceLines}</SyntaxStyle>
-  </Chakra.Container>;
+      <SyntaxStyle>{sourceLines}</SyntaxStyle>
+  </Chakra.Box>;
 }
 
 export default Source;

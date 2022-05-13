@@ -16,6 +16,8 @@ export interface Session {
   variables(options?: {
     indicateUnknown?: boolean
   }): Promise<Variables>;
+
+  stepNext(): Promise<void>;
 }
 
 export interface Variables {

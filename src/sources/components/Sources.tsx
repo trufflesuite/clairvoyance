@@ -59,11 +59,13 @@ const Sources = ({
 
   return (
     <Chakra.Tabs
+      height="100%"
       index={tabIndex}
       onChange={(index) => {
         setTraceIndexAtTabChange(currentTraceIndex);
         setTabIndex(index);
-      }}>
+      }}
+    >
       <Chakra.TabList
         overflowY="hidden"
         sx={{
@@ -80,7 +82,7 @@ const Sources = ({
         )}
       </Chakra.TabList>
 
-      <Chakra.TabPanels>
+      <Chakra.TabPanels height="100%" overflow="scroll">
         {sources.map(source =>
           <Chakra.TabPanel key={source.id}>
             {currentSourceRange && currentSourceRange.source.id === source.id
