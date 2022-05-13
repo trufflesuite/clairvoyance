@@ -1,4 +1,4 @@
-import useSWR from "swr";
+import useSWR from "swr/immutable";
 
 export const useBlock = ({provider, blockNumber}: any) => {
   const {data} = useSWR(`/block-${blockNumber}`, async () => {

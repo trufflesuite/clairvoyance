@@ -2,7 +2,7 @@ import { Compilation } from "@truffle/compile-common";
 import { forProject } from "@truffle/decoder";
 import { EthereumProvider } from "ganache";
 import { useEffect } from "react";
-import useSWR from "swr";
+import useSWR from "swr/immutable";
 import { FETCH_PROJECT_INFO_URI } from "../../decoding/constants";
 
 type DecoderOptions = {provider?: EthereumProvider | null, addresses: string[], compilations: Compilation[], networkId: number};
@@ -35,7 +35,7 @@ export const useDecoder = ({provider, addresses, compilations, networkId}: Decod
       }
     });
 
-    return {compilations: allCompilations, decoder}
+    return {compilations: allCompilations, decoder};
   });
 
   useEffect(() => {

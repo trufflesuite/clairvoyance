@@ -1,6 +1,6 @@
 import { EthereumProvider } from "ganache";
 import { useState } from "react";
-import useSWR from "swr";
+import useSWR from "swr/immutable";
 import { OpCode } from "../../types/types";
 
 export const useProgress = ({provider}: {provider: EthereumProvider}) => {
