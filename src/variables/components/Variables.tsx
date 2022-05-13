@@ -1,4 +1,6 @@
 import React from "react";
+import * as Chakra from "@chakra-ui/react";
+
 import * as Codec from "@truffle/codec";
 
 import type * as Debugger from "src/debugger";
@@ -19,15 +21,23 @@ export const Variables = ({
     return <p>Loading variables, status: {status}</p>;
   }
 
-  return <dl>{
-    Object.entries(variables)
-      .flatMap(([identifier, result], index) => [
-        <dt key={`dt-${index}`}>{
-          identifier
-        }</dt>,
-        <dd key={`dd-${index}`}>{
-          inspect(new Codec.Export.ResultInspector(result))
-        }</dd>
-      ])
-  }</dl>;
+  return <Chakra.TableContainer>
+    <Chakra.Table variant="simple">
+      <Chakra.Thead>
+        <Chakra.Tr>
+          <Chakra.Th>Identifier</Chakra.Th>
+          <Chakra.Th>Value</Chakra.Th>
+        </Chakra.Tr>
+      </Chakra.Thead>
+      <Chakra.Tbody>{
+        Object.entries(variables)
+          .map(([identifier, result], index) => <Chakra.Tr key={identifier}>
+            <Chakra.Td>{identifier}</Chakra.Td>
+            <Chakra.Td>{
+              inspect(new Codec.Export.ResultInspector(result))
+            }</Chakra.Td>
+          </Chakra.Tr>)
+      }</Chakra.Tbody>
+    </Chakra.Table>
+  </Chakra.TableContainer>;
 }
