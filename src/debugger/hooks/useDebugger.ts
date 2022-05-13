@@ -23,10 +23,17 @@ export type UseDebuggerResult =
   | {
       session: Session;
       status: Status.Ready;
+      fetchProgress?: undefined;
     }
   | {
       session?: undefined;
-      status: Exclude<Status, Status.Ready>;
+      status: Status.Fetching;
+      fetchProgress: number;
+    }
+  | {
+      session?: undefined;
+      status: Exclude<Status, Status.Ready | Status.Fetching>;
+      fetchProgress?: undefined;
     };
 
 export const useDebugger = ({
@@ -38,6 +45,7 @@ export const useDebugger = ({
   const [status, setStatus] = useState<Status>(
     Status.Initializing
   );
+  const [fetchProgress, setFetchProgress] = useState<number>(0);
 
   useEffect(() => {
     if (session) {
@@ -51,7 +59,11 @@ export const useDebugger = ({
       setSession(session);
       setStatus(Status.Fetching);
 
-      await fetchExternalForDebugger({ session, fetchCompilations });
+      await fetchExternalForDebugger({
+        session,
+        fetchCompilations,
+        setFetchProgress
+      });
       setStatus(Status.Starting);
 
       await session.startFullMode();
@@ -59,18 +71,29 @@ export const useDebugger = ({
     });
   }, [session, provider, transactionHash, fetchCompilations]);
 
-  if (status === Status.Ready) {
-    if (!session) {
-      throw new Error("Internal error: expected session to be defined");
+  switch (status) {
+    case Status.Ready: {
+      if (!session) {
+        throw new Error("Internal error: expected session to be defined");
+      }
+
+      return {
+        status,
+        session
+      };
     }
-
-    return {
-      status,
-      session
-    };
+    case Status.Fetching: {
+      return {
+        status,
+        fetchProgress
+      };
+    }
+    default: {
+      return {
+        status
+      };
+    }
   }
-
-  return { status };
 }
 
 interface InitializeDebuggerOptions {
@@ -92,11 +115,13 @@ async function initializeDebugger({
 interface FetchExternalForDebuggerOptions {
   session: Session;
   fetchCompilations: FetchCompilations;
+  setFetchProgress: (progress: number) => void;
 }
 
 async function fetchExternalForDebugger({
   session,
-  fetchCompilations
+  fetchCompilations,
+  setFetchProgress
 }: FetchExternalForDebuggerOptions): Promise<void> {
   const $ = session.selectors;
 
@@ -105,7 +130,7 @@ async function fetchExternalForDebugger({
     .filter(([_, { contractName }]: any) => contractName === undefined)
     .map(([address, _]) => address);
 
-  for (const address of addresses) {
+  for (const [index,address] of addresses.entries()) {
     const compilations = await fetchCompilations(address);
     const shimmedCompilations = Codec.Compilations.Utils.shimCompilations(
       compilations,
@@ -114,5 +139,9 @@ async function fetchExternalForDebugger({
     console.debug("shimmedCompilations %o", shimmedCompilations);
 
     await session.addExternalCompilations(shimmedCompilations);
+
+    setFetchProgress(
+      100 * (index + 1) / addresses.length
+    );
   }
 }
