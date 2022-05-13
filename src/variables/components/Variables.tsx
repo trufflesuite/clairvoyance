@@ -21,23 +21,26 @@ export const Variables = ({
     return <p>Loading variables, status: {status}</p>;
   }
 
-  return <Chakra.TableContainer>
-    <Chakra.Table variant="simple">
-      <Chakra.Thead>
-        <Chakra.Tr>
-          <Chakra.Th>Identifier</Chakra.Th>
-          <Chakra.Th>Value</Chakra.Th>
-        </Chakra.Tr>
-      </Chakra.Thead>
-      <Chakra.Tbody>{
-        Object.entries(variables)
-          .map(([identifier, result], index) => <Chakra.Tr key={identifier}>
-            <Chakra.Td>{identifier}</Chakra.Td>
-            <Chakra.Td>{
-              inspect(new Codec.Export.ResultInspector(result))
-            }</Chakra.Td>
-          </Chakra.Tr>)
-      }</Chakra.Tbody>
-    </Chakra.Table>
-  </Chakra.TableContainer>;
+  return <Chakra.Box>
+    <Chakra.Heading>Variables</Chakra.Heading>
+    <Chakra.TableContainer>
+      <Chakra.Table variant="simple">
+        <Chakra.Thead>
+          <Chakra.Tr>
+            <Chakra.Th>Identifier</Chakra.Th>
+            <Chakra.Th>Value</Chakra.Th>
+          </Chakra.Tr>
+        </Chakra.Thead>
+        <Chakra.Tbody>{
+          Object.entries(variables)
+            .map(([identifier, result], index) => <Chakra.Tr key={identifier}>
+              <Chakra.Td>{identifier}</Chakra.Td>
+              <Chakra.Td>{
+                inspect(new Codec.Export.ResultInspector(result))
+              }</Chakra.Td>
+            </Chakra.Tr>)
+        }</Chakra.Tbody>
+      </Chakra.Table>
+    </Chakra.TableContainer>
+  </Chakra.Box>;
 }

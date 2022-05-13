@@ -70,10 +70,10 @@ const Source = ({
 
   useEffect(() => {
     lineRefs[currentStartLine]?.current?.scrollIntoView({
-      block: "nearest",
+      block: "center",
       inline: "nearest"
     });
-  }, [currentStartLine]);
+  }, [currentStartLine, lineRefs]);
 
 
   const sourceLines = lineRefs.map((lineRef, index) => {
@@ -82,7 +82,13 @@ const Source = ({
       !!currentSourceRange &&
       index >= currentSourceRange.start.line && (
         currentSourceRange.end.line === null ||
-        index <= currentSourceRange.end.line
+        currentSourceRange.end.column === null ||
+        (
+          currentSourceRange.end.column === 0 && index < currentSourceRange.end.line
+        ) ||
+        (
+          currentSourceRange.end.column > 0 && index <= currentSourceRange.end.line
+        )
       )
     );
 
