@@ -56,7 +56,6 @@ const Source = ({
     });
   }, [contents]);
 
-  console.debug("highlightedSource %s", highlightedSource);
   const lines = highlightedSource.split("\n");
 
   // width of the gutter equals width of the longest line number
