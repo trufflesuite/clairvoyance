@@ -1,8 +1,14 @@
+import { AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box } from "@chakra-ui/react";
 import { ProjectDecoder } from "@truffle/decoder"
 import { useEffect, useState } from "react";
+import { Decoding } from "src/decoding/decoding.component";
+import { transformTxDecoding } from "src/decoding/transaction-decoding.util";
+
+type UnPromisify<T> = T extends Promise<infer U> ? U : T;
+type LogDecodings = UnPromisify<ReturnType<ProjectDecoder["decodeLog"]>>;
 
 export function Event({event, decoder}: {decoder: ProjectDecoder | null, event: any}) {
-  const [decodedEvent, setDecodedEvent] = useState<any | null>(null);
+  const [decodedEvent, setDecodedEvent] = useState<LogDecodings | null>(null);
   useEffect(() => {
     (async () => {
       try {
@@ -16,14 +22,26 @@ export function Event({event, decoder}: {decoder: ProjectDecoder | null, event: 
           blockHash: event.blockHash,
           blockNumber: parseInt(event.blockNumber, 16)
         }, {extras: "necessary"});
-        setDecodedEvent(_decoded);
+        setDecodedEvent(_decoded || null);
       } catch(e) {
         console.error(e);
       }
     })();
   }, [decoder, event]);
 
-  return <div className="events">
-    {decodedEvent ? <div>{JSON.stringify(decodedEvent)}</div> : <div>Decoding...</div>}
-  </div>
+  return (
+  <AccordionItem>
+    <h2>
+      <AccordionButton>
+        <Box flex='1' textAlign='left'>
+          {decodedEvent && decodedEvent.length > 0 ? <>{decodedEvent[0].class.typeName + "." + decodedEvent[0].abi.name}({decodedEvent[0].abi.inputs.map(input => input.name).join(", ")})</> : <>Decoding...</>}
+        </Box>
+        <AccordionIcon />
+      </AccordionButton>
+    </h2>
+    <AccordionPanel pb={4}>
+      {decodedEvent && decodedEvent.length > 0 ? <Decoding decoding={transformTxDecoding(decodedEvent[0]?.arguments)} /> : <>Decoding...</>}
+    </AccordionPanel>
+  </AccordionItem>
+  );
 }

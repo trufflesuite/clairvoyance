@@ -5,7 +5,10 @@ function makeTx(from: string, baseTx: BaseTransaction<any>): any {
   const tx = baseTx.toJSON() as any;
   tx.from = from;
   // protect against sending transactions with a too-high nonce (which will never complete)
-  delete (tx as any).nonce;
+  // or that already have a signature
+  ["v", "r", "s", "nonce"].forEach((key) => {
+    delete tx[key];
+  });
   return tx;
 }
 
