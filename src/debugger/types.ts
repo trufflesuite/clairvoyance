@@ -1,6 +1,10 @@
 import type * as Codec from "@truffle/codec";
+import type * as Common from "@truffle/compile-common";
 
 export type Selector = any;
+
+export type FetchCompilations =
+  (address: string) => Promise<Common.Compilation[]>;
 
 export interface Session {
   selectors: any;
