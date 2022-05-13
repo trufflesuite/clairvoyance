@@ -29,7 +29,6 @@ export function Event({event, decoder}: {decoder: ProjectDecoder | null, event: 
     })();
   }, [decoder, event]);
 
-  console.log(decodedEvent && decodedEvent.length > 0 ? decodedEvent[0] : null);
   return (
   <AccordionItem>
     <h2>
