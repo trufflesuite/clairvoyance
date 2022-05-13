@@ -38,7 +38,9 @@ const Source = ({
   const sourceRef = useRef<HTMLDivElement>(null);
 
   const [highlightedSource, setHighlightedSource] =
-    useState<string | undefined>();
+    useState<string>("");
+
+  const currentStartLine = currentSourceRange?.start.line || 0;
 
   useEffect(() => {
     Promise.resolve().then(() => {
@@ -54,10 +56,6 @@ const Source = ({
     });
   }, [contents]);
 
-  if (!highlightedSource) {
-    return <p>Highlighting source...</p>;
-  }
-
   console.debug("highlightedSource %s", highlightedSource);
   const lines = highlightedSource.split("\n");
 
@@ -71,7 +69,13 @@ const Source = ({
   // create all the refs in advance
   const lineRefs = lines.map((line, index) => createRef<HTMLDivElement>());
 
-  // const selectedLineRef = lineRefs[selectedLineNumber];
+  useEffect(() => {
+    lineRefs[currentStartLine]?.current?.scrollIntoView({
+      block: "nearest",
+      inline: "nearest"
+    });
+  }, [currentStartLine]);
+
 
   const sourceLines = lineRefs.map((lineRef, index) => {
     const line = lines[index];
@@ -94,9 +98,11 @@ const Source = ({
     />;
   });
 
-  return <Chakra.Box>
+  return <Chakra.Box height="100%">
     <Chakra.Heading>{sourcePath}</Chakra.Heading>
+    <Chakra.Box height="100%" overflow="scroll">
       <SyntaxStyle>{sourceLines}</SyntaxStyle>
+    </Chakra.Box>
   </Chakra.Box>;
 }
 

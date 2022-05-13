@@ -4,6 +4,8 @@ import * as Chakra from "@chakra-ui/react";
 import * as ChakraIcons from "@chakra-ui/icons";
 import { useSWRConfig } from "swr";
 
+import { selectors as $ } from "@truffle/debugger";
+
 import type * as Debugger from "src/debugger";
 
 import { useSources } from "../hooks/useSources";
@@ -31,6 +33,9 @@ const Sources = ({
     status: currentSourceRangeStatus
   } = useCurrentSourceRange({ session });
 
+  const isFinished = session.view($.trace.finished);
+  console.debug("isFinished %o", isFinished);
+
   const tabIndexesBySourceId = (sources || [])
     .map(({ id }, index) => ({ [id]: index }))
     .reduce((a, b) => ({ ...a, ...b }), {})
@@ -39,7 +44,9 @@ const Sources = ({
   const [traceIndexAtTabChange, setTraceIndexAtTabChange] =
     useState<number | undefined>(undefined);
   const currentTraceIndex = currentSourceRange?.traceIndex;
-  const currentSourceId = currentSourceRange?.source.id;
+  const currentSourceId = isFinished
+    ? undefined
+    : currentSourceRange?.source.id;
   const currentTabIndex = tabIndexesBySourceId[currentSourceId || ""] || 0;
   console.debug("currentTabIndex %s", currentTabIndex);
 
@@ -82,9 +89,9 @@ const Sources = ({
         )}
       </Chakra.TabList>
 
-      <Chakra.TabPanels height="100%" overflow="scroll">
+      <Chakra.TabPanels height="100%">
         {sources.map(source =>
-          <Chakra.TabPanel key={source.id}>
+          <Chakra.TabPanel key={source.id} height="100%">
             {currentSourceRange && currentSourceRange.source.id === source.id
               ? <Source source={source} currentSourceRange={currentSourceRange} />
               : <Source source={source} />

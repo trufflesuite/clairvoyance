@@ -42,10 +42,12 @@ const Debug: NextPage = () => {
 
   return <Chakra.Box
     width="100vw"
-    height="100vh"
+    height="70vh"
   >
-    <Controls session={session} />
-    <Sources session={session} />
+    <Chakra.Box width="100%" height="100%">
+      <Controls session={session} />
+      <Sources session={session} />
+    </Chakra.Box>
   </Chakra.Box>;
 }
 export default Debug;

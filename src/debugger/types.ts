@@ -17,7 +17,9 @@ export interface Session {
     indicateUnknown?: boolean
   }): Promise<Variables>;
 
+  continueUntilBreakpoint(): Promise<void>;
   stepNext(): Promise<void>;
+  reset(): Promise<void>;
 }
 
 export interface Variables {
