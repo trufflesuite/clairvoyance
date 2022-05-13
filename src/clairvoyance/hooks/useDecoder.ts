@@ -1,47 +1,41 @@
-import { forAddress } from "@truffle/decoder";
+import { Compilation } from "@truffle/compile-common";
+import { forProject } from "@truffle/decoder";
 import { EthereumProvider } from "ganache";
 import { useEffect } from "react";
 import useSWR from "swr";
-import { FETCH_PROJECT_INFO_URI, FETCH_SUPPORTED_NETWORKS_URI } from "src/decoding/constants";
+import { FETCH_PROJECT_INFO_URI } from "../../decoding/constants";
 
-type DecoderOptions = {key?: string, provider?: EthereumProvider | null, to: string, networkId: number, chainId: number};
+type DecoderOptions = {provider?: EthereumProvider | null, addresses: string[], compilations: Compilation[], networkId: number};
 
 async function fetchJson(url: string): Promise<any> {
   return fetch(url).then(response => response.json());
 }
 
-export const useDecoder = ({key, provider, to, networkId, chainId}: DecoderOptions) => {
-  const { data, error, mutate } = useSWR("/decoder-" + key, async () => {
+export const useDecoder = ({provider, addresses, compilations, networkId}: DecoderOptions) => {
+  const { data, error, mutate } = useSWR("/decoder-" + addresses.join("-"), async () => {
     if (!provider) return;
 
-    // decode tx input data
-    const networks = await fetchJson(FETCH_SUPPORTED_NETWORKS_URI);
+    const addressPromises = addresses.map(async (address) => {
+      const requestUrl = `${FETCH_PROJECT_INFO_URI}?${new URLSearchParams({
+        address,
+        'network-id': BigInt(networkId).toString(),
+      })}`;
 
-    if (
-      !networks.some(
-        (n: any) => n.active && BigInt(n.chainId) === BigInt(chainId),
-      )
-    ) {
-      throw new Error(
-        'transactionDecodingUnsupportedNetworkError: ' + chainId
-      );
-    }
+      return await fetchJson(requestUrl);
+    });
+    const results = (await Promise.all(addressPromises));
 
-    const requestUrl = `${FETCH_PROJECT_INFO_URI}?${new URLSearchParams({
-      address: to,
-      'network-id': BigInt(networkId).toString(),
-    })}`;
-
-    const response = await fetchJson(requestUrl);
+    const allCompilations= [...compilations, ...results.flatMap((result) => result.compileResult.compilations)];
 
     // creating instance of the truffle decoder
-    const decoder = await forAddress(to, {
+    const decoder = await forProject({
       provider,
       projectInfo: {
-        commonCompilations: response.compileResult.compilations
+        commonCompilations: allCompilations
       }
     });
-    return {commonCompilations: response.compileResult.compilations, decoder}
+
+    return {compilations: allCompilations, decoder}
   });
 
   useEffect(() => {
@@ -51,7 +45,7 @@ export const useDecoder = ({key, provider, to, networkId, chainId}: DecoderOptio
   }, [provider]);
 
   return {
-    commonCompilations: data?.commonCompilations || null,
+    compilations: data?.compilations || null,
     decoder: data?.decoder || null,
   };
 };

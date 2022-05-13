@@ -9,7 +9,8 @@ import { useDecoder } from './hooks/useDecoder';
 export function Clairvoyance({ options }: {options: Options}){
   const [tab, setTab] = useState<"simulation" | "debug">("simulation");
   const {provider} = useGanache(options.options);
-  const {decoder} = useDecoder({...options, provider});
+  const decoderOptions = {provider, addresses: [options.to], compilations: [], networkId: options.networkId};
+  const {decoder, compilations} = useDecoder(decoderOptions);
 
   if(!provider){
     return <div>Loading...</div>
@@ -28,7 +29,7 @@ export function Clairvoyance({ options }: {options: Options}){
           )}>Debug</button>
         </div>
         <div className="tabContents">
-          { tab === "simulation" ? <TransactionSimulation from={options.from} tx={options.tx} decoder={decoder} provider={provider} /> : <div>todo</div> }
+          { tab === "simulation" ? <TransactionSimulation networkId={options.networkId} from={options.from} tx={options.tx} compilations={compilations} provider={provider} /> : <div>todo</div> }
         </div>
       </div>
     </div>

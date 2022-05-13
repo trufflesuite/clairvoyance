@@ -18,35 +18,12 @@ export function TransactionDecoding({ decoder, options, from, tx, networkId }: a
           to,
           input: data,
           blockNumber: null,
-        }) as any;
+        });
 
         // transform tx decoding arguments into tree data
         const params = transformTxDecoding(_decoding?.arguments);
         setDecoding(params);
       }
-        
-      // if (!resultPending) {
-      //   setResultPending(true);
-      //   const subId = await provider.request({method: "eth_subscribe", params: ["logs"]});
-      //   provider.on("message", (event) => {
-      //     const _events = events || [];
-      //     _events.push(event);
-      //     setEvents(_events);
-      //   });
-
-      //   provider.on("ganache:vm:tx:step", (event) => {
-      //     setOpcode(event.data.opcode);
-      //   });
-
-      //   const j = tx.toJSON();
-      //   j.from = from;
-      //   // protect against sending transactions with a too-high nonce (which will never complete)
-      //   j.nonce = undefined;
-      //   const hash = await provider.request({method: "eth_sendTransaction", params: [j]});
-      //   const _result = await provider.request({method: "eth_getTransactionReceipt", params: [hash]});
-      //   await provider.request({method: "eth_unsubscribe", params: [subId]});
-      //   setResult(_result as any)
-      // }
     })();
   }, [decoder, options, from, to, networkId, data]);
 

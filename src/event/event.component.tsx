@@ -1,7 +1,7 @@
-import { ContractInstanceDecoder } from "@truffle/decoder"
+import { ProjectDecoder } from "@truffle/decoder"
 import { useEffect, useState } from "react";
 
-export function Event({event, decoder}: {decoder: ContractInstanceDecoder | null, event: any}) {
+export function Event({event, decoder}: {decoder: ProjectDecoder | null, event: any}) {
   const [decodedEvent, setDecodedEvent] = useState<any | null>(null);
   useEffect(() => {
     (async () => {
