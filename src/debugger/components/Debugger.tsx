@@ -20,28 +20,67 @@ const Debugger = ({
   transactionHash,
   fetchCompilations
 }: Props) => {
-  const { session, status } = useDebugger({
+  const { session, status, fetchProgress } = useDebugger({
     provider,
     transactionHash,
     fetchCompilations
   });
 
-  if (status !== Status.Ready) {
-    return <p>Loading debugger...</p>;
+  switch (status) {
+    case Status.Initializing: {
+      return <Chakra.Box>
+        <Chakra.Heading>
+          <Chakra.Spinner />
+          <Chakra.Text>Preparing to start debugger...</Chakra.Text>
+        </Chakra.Heading>
+        <Chakra.Stack>
+          <Chakra.Skeleton height="20px" />
+          <Chakra.Skeleton height="20px" />
+          <Chakra.Skeleton height="20px" />
+        </Chakra.Stack>
+      </Chakra.Box>;
+    }
+    case Status.Fetching: {
+      return <Chakra.Box>
+        <Chakra.Heading>
+          <Chakra.CircularProgress value={fetchProgress} />
+          <Chakra.Text>Fetching verified sources...</Chakra.Text>
+        </Chakra.Heading>
+        <Chakra.Stack>
+          <Chakra.Skeleton height="20px" />
+          <Chakra.Skeleton height="20px" />
+          <Chakra.Skeleton height="20px" />
+        </Chakra.Stack>
+      </Chakra.Box>;
+    }
+    case Status.Starting: {
+      return <Chakra.Box>
+        <Chakra.Heading>
+          <Chakra.Spinner />
+          <Chakra.Text>Starting debugger...</Chakra.Text>
+        </Chakra.Heading>
+        <Chakra.Stack>
+          <Chakra.Skeleton height="20px" />
+          <Chakra.Skeleton height="20px" />
+          <Chakra.Skeleton height="20px" />
+        </Chakra.Stack>
+      </Chakra.Box>;
+    }
+    case Status.Ready: {
+      return <Chakra.Box width="100%">
+        <Chakra.Flex>
+          <Chakra.Box width="70%">
+            <Controls session={session} />
+            <Sources session={session} />
+          </Chakra.Box>
+          <Chakra.Spacer />
+          <Chakra.Box width="30%">
+            <Variables session={session} />
+          </Chakra.Box>
+        </Chakra.Flex>
+      </Chakra.Box>;
+    }
   }
-
-  return <Chakra.Box width="100%">
-    <Chakra.Flex>
-      <Chakra.Box width="70%">
-        <Controls session={session} />
-        <Sources session={session} />
-      </Chakra.Box>
-      <Chakra.Spacer />
-      <Chakra.Box width="30%">
-        <Variables session={session} />
-      </Chakra.Box>
-    </Chakra.Flex>
-  </Chakra.Box>
 }
 
 export default Debugger;
