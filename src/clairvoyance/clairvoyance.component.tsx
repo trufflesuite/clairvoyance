@@ -19,7 +19,7 @@ export function Clairvoyance({ options }: {options: Options}){
 
   return (
     <Chakra.Box>
-      <TransactionDetails options={options.options} from={options.from} tx={options.tx}/>
+      <TransactionDetails options={options.options} from={options.from} tx={options.tx} provider={provider}/>
       <TransactionDecoding decoder={decoder} provider={provider} options={options.options} from={options.from} tx={options.tx} networkId={options.networkId} />
       <Chakra.Tabs>
         <Chakra.TabList>

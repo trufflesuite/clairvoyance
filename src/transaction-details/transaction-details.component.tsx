@@ -1,31 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import TransactionBreakdownRow from "./transaction-breakdown-row.component";
 import SenderToRecipient from "./sender-to-recipient.component";
-const inspect = require('browser-util-inspect');
-import {Flex, Box, Divider} from '@chakra-ui/react'
-import styles from "./sender-to-recipient.module.css";
+import {Box, Divider, Text} from '@chakra-ui/react'
+import styles from "./transaction-details.module.css";
+import { NETWORK_TO_NAME_MAP, formatCurrency, formatBlockNumber, MAINNET_NETWORK_ID } from './transaction-details.util';
+import {useBlock} from "./hooks/useBlock";
 
-export function TransactionDetails({ options, from, tx, tokenName = "Eth", decimal = 18 }: any) {
-  //const toElement = tx && tx.to ? <ListItem>To: {tx.to.toString("hex")}</ListItem> : null;
-  
-  function formatCurrency(value: number) {
-    return `${value / Math.pow(18, decimal)} ${tokenName}`;
+export function TransactionDetails({ options, from, tx, provider }: any) {
+  const block = useBlock({provider, blockNumber: options.fork.blockNumber});
+  let gasFee = undefined,
+    totalCost = undefined;
+  if (block !== undefined) {
+    const maxGasFee = Math.min(parseInt(block.baseFeePerGas) + parseInt(tx.maxPriorityFeePerGas), parseInt(tx.maxFeePerGas));
+    gasFee = maxGasFee * parseInt(tx.gasLimit);
+    totalCost = gasFee + parseInt(tx.value)
   }
 
+  const networkId: string = options.chain.networkId;
+  const networkName = NETWORK_TO_NAME_MAP[networkId];
+  const tokenName = networkId === MAINNET_NETWORK_ID ? "Eth": `${networkName}Eth`;
+  
   const values = {
-    to: tx.to.toString("hex"),
+    to: tx.to.toString(),
     from,
-    nonce: "0x" + tx.nonce.toString(16), // number
-    networkName: "Mainnet",
-    chainId: tx.chainId.toString("hex"),
-    networkId: options.chain.networkId,
-    rpcUrl: options.fork.url,
-    blockNumber: options.fork.blockNumber,
-
-    amount: formatCurrency(Number(tx.value) / decimal), 
-    gasLimit: tx.gasLimit.toString("hex"),
-    gasPrice: formatCurrency(Number(tx.maxFeePerGas) + Number(tx.maxPriorityFeePerGas)),
-    totalCost: formatCurrency(Number(tx.value) + Number(tx.maxFeePerGas) + Number(tx.maxPriorityFeePerGas) * Number(tx.gasLimit))
+    networkName,
+    networkId,
+    nonce:`0x${tx.nonce.toString(16)}`,
+    chainId: `0x${tx.chainId.toString("hex")}`,
+    blockNumber: formatBlockNumber(options.fork.blockNumber),
+    amount: formatCurrency(parseInt(tx.value), tokenName),
+    gasFee: gasFee === undefined? "Loading..." : formatCurrency(gasFee, tokenName),
+    totalCost: totalCost === undefined? "Loading..." : formatCurrency(totalCost, tokenName)
   };
 
   return <Box className={styles.transactionDetails}>
@@ -34,7 +39,6 @@ export function TransactionDetails({ options, from, tx, tokenName = "Eth", decim
 
     <Box className={styles.header}>Network</Box>
     <TransactionBreakdownRow label="Network" value={values.networkName} />
-    <TransactionBreakdownRow label="Rpc Url" value={values.rpcUrl} />
     <TransactionBreakdownRow label="Chain Id" value={values.chainId} />
     <TransactionBreakdownRow label="Network Id" value={values.networkId} />
     <TransactionBreakdownRow label="Block Number" value={values.blockNumber} />
@@ -42,8 +46,10 @@ export function TransactionDetails({ options, from, tx, tokenName = "Eth", decim
     <Box className={styles.header}>Transaction</Box>
     <TransactionBreakdownRow label="Nonce" value={values.nonce} />
     <TransactionBreakdownRow label="Amount" value={values.amount} />
-    <TransactionBreakdownRow label="Gas limit" value={values.gasLimit} />
-    <TransactionBreakdownRow label="Gas price" value={values.gasPrice} />
+    <TransactionBreakdownRow label="Gas fee" value={values.gasFee} />
     <TransactionBreakdownRow label="Total" value={values.totalCost} />
+    
+    <Box className={styles.header}>Data</Box>
+    <Text fontSize="sm" className={styles.dataBlock}>0x{tx.data}</Text>
   </Box>
 };

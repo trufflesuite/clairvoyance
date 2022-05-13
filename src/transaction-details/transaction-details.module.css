@@ -23,3 +23,8 @@
   overflow:hidden;
   word-wrap:normal;
 }
+
+.dataBlock {
+  font-family: monospace;
+  background-color:#eee;
+}
