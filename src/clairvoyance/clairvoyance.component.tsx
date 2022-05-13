@@ -7,7 +7,6 @@ import { Options } from '../types/types';
 import { useGanache } from './hooks/useGanache';
 import { useDecoder } from './hooks/useDecoder';
 
-
 export function Clairvoyance({ options }: {options: Options}){
   const {provider} = useGanache(options.options);
   const decoderOptions = {provider, addresses: [options.to], compilations: [], networkId: options.networkId};
@@ -19,7 +18,12 @@ export function Clairvoyance({ options }: {options: Options}){
 
   return (
     <Chakra.Box>
+      <Chakra.Heading fontSize="larger">Transaction Details</Chakra.Heading>
       <TransactionDetails options={options.options} from={options.from} tx={options.tx} provider={provider}/>
+      
+      <Chakra.Divider/>
+      
+      <Chakra.Heading fontSize="larger">Decoding</Chakra.Heading>
       <TransactionDecoding decoder={decoder} provider={provider} options={options.options} from={options.from} tx={options.tx} networkId={options.networkId} />
       <Chakra.Tabs>
         <Chakra.TabList>

@@ -12,11 +12,7 @@
   text-align:center;
 }
 .transactionDetails {
-  width:800px;
-  margin:10px auto;
-  padding:10px;
-  box-shadow: 4px 4px 4px #eee;
-  border: 1px solid #666;
+  margin-bottom:20px;
 }
 .transactionDetails div {
   text-overflow:ellipsis;

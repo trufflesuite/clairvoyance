@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import TransactionBreakdownRow from "./transaction-breakdown-row.component";
 import SenderToRecipient from "./sender-to-recipient.component";
-import {Box, Divider, Text} from '@chakra-ui/react'
+import {Box, Text} from '@chakra-ui/react'
 import styles from "./transaction-details.module.css";
 import { NETWORK_TO_NAME_MAP, formatCurrency, formatBlockNumber, MAINNET_NETWORK_ID } from './transaction-details.util';
 import {useBlock} from "./hooks/useBlock";
@@ -35,7 +35,6 @@ export function TransactionDetails({ options, from, tx, provider }: any) {
 
   return <Box className={styles.transactionDetails}>
     <SenderToRecipient from={values.from} to={values.to} />
-    <Divider/>
 
     <Box className={styles.header}>Network</Box>
     <TransactionBreakdownRow label="Network" value={values.networkName} />
@@ -46,7 +45,7 @@ export function TransactionDetails({ options, from, tx, provider }: any) {
     <Box className={styles.header}>Transaction</Box>
     <TransactionBreakdownRow label="Nonce" value={values.nonce} />
     <TransactionBreakdownRow label="Amount" value={values.amount} />
-    <TransactionBreakdownRow label="Gas fee" value={values.gasFee} />
+    <TransactionBreakdownRow label="Gas fee (maximum)" value={values.gasFee} />
     <TransactionBreakdownRow label="Total" value={values.totalCost} />
     
     <Box className={styles.header}>Data</Box>

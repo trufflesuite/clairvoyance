@@ -7,6 +7,10 @@ import Common from '@ethereumjs/common';
 import { Clairvoyance } from '../src/clairvoyance/clairvoyance.component';
 import { ParsedUrlQuery } from 'querystring';
 import { Options } from '../src/types/types';
+import { Box } from '@chakra-ui/react';
+import truffleLogo from './Truffle.png';
+import metamaskLogo from './MetaMask.png';
+
 
 function getOptions(query: ParsedUrlQuery): Options{
   let options = {} as unknown as Options;
@@ -65,7 +69,13 @@ const Home: NextPage = () => {
       <Head>
         <title>Clairvoyance</title>
       </Head>
-      <Clairvoyance options={options} />
+      <Box className="logos">
+      <img src={truffleLogo.src} className="right"/>
+      <img src={metamaskLogo.src}/>
+      </Box>
+      <Box className="main">
+        <Clairvoyance options={options} />
+      </Box>
     </div>
   )
 }
