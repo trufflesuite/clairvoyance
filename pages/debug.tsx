@@ -1,9 +1,11 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import * as Chakra from "@chakra-ui/react";
 import { useRouter } from 'next/router'
 import { useProvider } from "src/web3/hooks/useProvider";
 import { useDebugger } from "src/debugger";
 import { Sources } from "src/sources";
+import { Controls } from "src/debugger"
 import axios from "axios";
 
 const Debug: NextPage = () => {
@@ -38,8 +40,14 @@ const Debug: NextPage = () => {
     return (<p>Loading... </p>);
   }
 
-  return (
-    <Sources session={session} />
-  )
+  return <Chakra.Box
+    width="100vw"
+    height="70vh"
+  >
+    <Chakra.Box width="100%" height="100%">
+      <Controls session={session} />
+      <Sources session={session} />
+    </Chakra.Box>
+  </Chakra.Box>;
 }
 export default Debug;

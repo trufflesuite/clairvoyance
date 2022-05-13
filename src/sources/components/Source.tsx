@@ -26,26 +26,37 @@ low.registerLanguage("solidity", hljsSolidity.solidity);
 
 export interface Props {
   source: Sources.Source;
-  selectedLineNumber?: number;
+  currentSourceRange?: Sources.SourceRange;
 }
 
 const Source = ({
   source,
-  selectedLineNumber
+  currentSourceRange
 }: Props) => {
   const { id, sourcePath, contents } = source;
   const [scrollTop, setScrollTop] = useState(0);
   const sourceRef = useRef<HTMLDivElement>(null);
 
-  const processor = unified().use(stringify);
-  const highlightedSource = processor
-    .stringify({
-      type: "root",
-      children: low.highlight("solidity", contents).value
-    } as any)
-    .toString();
+  const [highlightedSource, setHighlightedSource] =
+    useState<string>("");
 
-  console.debug("highlightedSource: %s", highlightedSource);
+  const currentStartLine = currentSourceRange?.start.line || 0;
+
+  useEffect(() => {
+    Promise.resolve().then(() => {
+      const processor = unified().use(stringify);
+      setHighlightedSource(
+        processor
+        .stringify({
+          type: "root",
+          children: low.highlight("solidity", contents).value
+        } as any)
+        .toString()
+      );
+    });
+  }, [contents]);
+
+  console.debug("highlightedSource %s", highlightedSource);
   const lines = highlightedSource.split("\n");
 
   // width of the gutter equals width of the longest line number
@@ -58,24 +69,41 @@ const Source = ({
   // create all the refs in advance
   const lineRefs = lines.map((line, index) => createRef<HTMLDivElement>());
 
-  // const selectedLineRef = lineRefs[selectedLineNumber];
+  useEffect(() => {
+    lineRefs[currentStartLine]?.current?.scrollIntoView({
+      block: "nearest",
+      inline: "nearest"
+    });
+  }, [currentStartLine]);
+
 
   const sourceLines = lineRefs.map((lineRef, index) => {
     const line = lines[index];
+    const selected = (
+      !!currentSourceRange &&
+      index >= currentSourceRange.start.line && (
+        currentSourceRange.end.line === null ||
+        index <= currentSourceRange.end.line
+      )
+    );
+
     return <SourceLine
       source={source}
       lineContents={line}
       lineNumber={index}
       key={`${id}-line-${index}`}
+      selected={selected}
       lineRef={lineRef}
       lineNumbersGutterWidth={lineNumbersGutterWidth}
     />;
   });
 
-  return <Chakra.Container minWidth="100%">
+  return <Chakra.Box height="100%">
     <Chakra.Heading>{sourcePath}</Chakra.Heading>
-    <SyntaxStyle>{sourceLines}</SyntaxStyle>
-  </Chakra.Container>;
+    <Chakra.Box height="100%" overflow="scroll">
+      <SyntaxStyle>{sourceLines}</SyntaxStyle>
+    </Chakra.Box>
+  </Chakra.Box>;
 }
 
 export default Source;

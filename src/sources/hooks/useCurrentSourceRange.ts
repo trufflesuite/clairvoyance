@@ -4,16 +4,15 @@ import useSWR from "swr";
 import { selectors as $ } from "@truffle/debugger";
 
 import type * as Debugger from "src/debugger";
-
-import { Source } from "../types";
+import type { SourceRange } from "../types";
 
 export interface UseOptions {
   session?: Debugger.Session;
 }
 
 export type UseResult =
-  | { status: Exclude<Status, Status.Ready>; sources?: undefined; }
-  | { status: Status.Ready; sources: Source[]; };
+  | { status: Exclude<Status, Status.Ready>; currentSourceRange?: undefined }
+  | { status: Status.Ready; currentSourceRange: SourceRange };
 
 export enum Status {
   Waiting = "waiting",
@@ -22,16 +21,34 @@ export enum Status {
   Failed = "failed"
 }
 
-export const useSources = ({
+export const useCurrentSourceRange = ({
   session
 }: UseOptions): UseResult => {
-  const { data, error, mutate } = useSWR("/sources", async () => {
-    console.debug("fetching sources");
+  const { data, error, mutate } = useSWR("/currentSourceRange", async () => {
     if (!session) {
       return;
     }
 
-    return session.view($.sourcemapping.views.sources);
+    const traceIndex = session.view(
+      $.trace.index
+    );
+
+    const { id } = session.view(
+      $.sourcemapping.current.source
+    )
+
+    const {
+      lines: { start, end }
+    } = session.view(
+      $.sourcemapping.current.sourceRange
+    );
+
+    return {
+      traceIndex,
+      source: { id },
+      start,
+      end
+    };
   });
 
   useEffect(() => {
@@ -47,15 +64,8 @@ export const useSources = ({
     : Status.Pending;
 
   if (status === Status.Ready) {
-    const sources: Source[] = (Object.values(data) as any[])
-      .flatMap(({ id, sourcePath, source: contents, language }) =>
-        language === "Solidity"
-          ? [{ id, sourcePath, contents, language }]
-          : []
-      );
-
     return {
-      sources,
+      currentSourceRange: data as SourceRange,
       status
     }
   }
