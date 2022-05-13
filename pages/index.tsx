@@ -40,7 +40,7 @@ function getOptions(query: ParsedUrlQuery): Options{
       options.chainId = chainId;
       options.to = options.tx.to!.toString();
       options.options = {
-        logging: {logger:{log: () => {}}},
+        //logging: {logger:{log: () => {}}},
         fork: {
           url: query.rpcUrl as string,
           blockNumber: parseInt(query.blockNumber as string),
