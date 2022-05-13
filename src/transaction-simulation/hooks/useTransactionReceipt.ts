@@ -1,5 +1,5 @@
 import { BaseTransaction } from "@ethereumjs/tx/dist/baseTransaction";
-import useSWR from "swr";
+import useSWR from "swr/immutable";
 
 function makeTx(from: string, baseTx: BaseTransaction<any>): any {
   const tx = baseTx.toJSON() as any;

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useSWR from "swr";
+import useSWR from "swr/immutable";
 
 import { selectors as $ } from "@truffle/debugger";
 

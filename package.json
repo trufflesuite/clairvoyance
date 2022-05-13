@@ -27,7 +27,7 @@
     "copy-to-clipboard": "^3.3.1",
     "ethereum-public-key-to-address": "^0.0.5",
     "framer-motion": "^6",
-    "ganache": "7.1.0-clairvoyance.5",
+    "ganache": "7.1.0-clairvoyance.6",
     "highlightjs-solidity": "^2.0.5",
     "lowlight": "^1",
     "next": "12.1.6",

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useSWR from "swr";
+import useSWR from "swr/immutable";
 
 import type * as Debugger from "src/debugger";
 

@@ -3688,10 +3688,10 @@ functions-have-names@^1.2.2:
   resolved "https://registry.yarnpkg.com/functions-have-names/-/functions-have-names-1.2.3.tgz#0404fe4ee2ba2f607f0e0ec3c80bae994133b834"
   integrity sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==
 
-ganache@7.1.0-clairvoyance.5:
-  version "7.1.0-clairvoyance.5"
-  resolved "https://registry.yarnpkg.com/ganache/-/ganache-7.1.0-clairvoyance.5.tgz#f635619b6514d5fb5028b63fd1976da320110c8b"
-  integrity sha512-olq88md/vCR1pDfOgWRDYCy17RlMpTYIMNnoFe9XmsVVkA92VnCn6Bk1lW9Lk3K07xHIULjDsrWrwzd6+LSSHg==
+ganache@7.1.0-clairvoyance.6:
+  version "7.1.0-clairvoyance.6"
+  resolved "https://registry.yarnpkg.com/ganache/-/ganache-7.1.0-clairvoyance.6.tgz#f89d87b9a2061dddf4d2c33fca540d6c13eef64b"
+  integrity sha512-L1RplvvfHUemv+lF/CTyBbLkplqodwRvfn9BeFSl6mc2wCsPwLAnC4RR0okgKUypowH0tH2V8e/FjedPdGJQiQ==
   dependencies:
     "@trufflesuite/bigint-buffer" "1.1.9"
     emittery "0.10.0"
