@@ -31,7 +31,7 @@ export function Decoding({ decoding, showSignature }: {showSignature: boolean,  
                 <Chakra.UnorderedList>
                   {value.map((itemValue: any, index: any) => {
                     return (
-                      <li>
+                      <li key={`${typeClass}-${index}`}>
                         {renderLeaf({
                           typeClass: itemValue.type?.typeClass,
                           value: itemValue.value,
@@ -59,10 +59,16 @@ export function Decoding({ decoding, showSignature }: {showSignature: boolean,  
     elementCount: number
   ) => {
     const isLast = index === elementCount - 1;
+    const openGroupChar = typeClass==="array" ? "[":
+                          typeClass==="struct"? "{":
+                          "";
+    const closeGroupChar = typeClass==="array" ? "]":
+                          typeClass==="struct"? "}":
+                          "";
     return <Chakra.ListItem key={`${typeClass}-${index}`}>
-      <span className={styles.keyword}>{typeClass}</span> {name} = {typeClass==="array" ? "[": ""}
+      <span className={styles.keyword}>{typeClass}</span>  {name} = {openGroupChar}
         {children ? children.map((e:any,i:number) => renderTree(e,i,children.length)): renderLeaf({ name, typeClass, type, value, kind })}
-        {typeClass==="array" ? "]": ""}{isLast ? "": ","}
+        {closeGroupChar}{isLast ? "": ","}
     </Chakra.ListItem>
   };
 
