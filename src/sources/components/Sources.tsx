@@ -33,9 +33,6 @@ const Sources = ({
     status: currentSourceRangeStatus
   } = useCurrentSourceRange({ session });
 
-  const isFinished = session.view($.trace.finished);
-  console.debug("isFinished %o", isFinished);
-
   const tabIndexesBySourceId = (sources || [])
     .map(({ id }, index) => ({ [id]: index }))
     .reduce((a, b) => ({ ...a, ...b }), {})
@@ -44,9 +41,7 @@ const Sources = ({
   const [traceIndexAtTabChange, setTraceIndexAtTabChange] =
     useState<number | undefined>(undefined);
   const currentTraceIndex = currentSourceRange?.traceIndex;
-  const currentSourceId = isFinished
-    ? undefined
-    : currentSourceRange?.source.id;
+  const currentSourceId = currentSourceRange?.source.id;
   const currentTabIndex = tabIndexesBySourceId[currentSourceId || ""] || 0;
   console.debug("currentTabIndex %s", currentTabIndex);
 
