@@ -87,7 +87,7 @@ export function Clairvoyance({ options }: {options: Options}){
             <TransactionSimulation decoder={eventDecoder} receipt={receipt} callResult={callResult} options={options} balances={balances}/>
           </Chakra.TabPanel>
           <Chakra.TabPanel>
-            <Events decoder={decoder} events={receipt?.logs || null} />
+            <Events decoder={eventDecoder} events={receipt?.logs || null} />
           </Chakra.TabPanel>
           <Chakra.TabPanel>
             {receipt && receipt.transactionHash ?

@@ -9,34 +9,13 @@ const Address = ({
   recipientEns,
   recipientName,
 }) => {
-  const t = (a) => {return a};
-  const [showNicknamePopovers, setShowNicknamePopovers] = useState(false);
-
-  const recipientToRender = checksummedRecipientAddress || t('newContract');
+  const recipientToRender = checksummedRecipientAddress || 'newContract';
 
   return (
     <div
       className="tx-insight tx-insight-component tx-insight-component-address"
-      onClick={() => {
-        copyToClipboard(checksummedRecipientAddress);
-        if (onRecipientClick) {
-          onRecipientClick();
-        }
-      }}
     >
-      <div className="tx-insight-component-address__sender-icon">
-        Identicon
-      </div>
-
-      <div
-        className="address__name"
-        onClick={() => setShowNicknamePopovers(true)}
-      >
-        {recipientToRender}
-      </div>
-      {showNicknamePopovers ? (
-        checksummedRecipientAddress
-      ) : null}
+      {recipientToRender}
     </div>
   );
 };
