@@ -6,6 +6,7 @@ import { TransactionDetails} from "../transaction-details/transaction-details.co
 import { Options } from '../types/types';
 import { useGanache } from './hooks/useGanache';
 import { useDecoder } from './hooks/useDecoder';
+import { useBalances } from './hooks/useBalances';
 import { useTransactionResult } from './hooks/useTransactionResult';
 import { useProgress } from "src/transaction-simulation/hooks/useProgress";
 import { useTransactionReceipt } from "src/transaction-simulation/hooks/useTransactionReceipt";
@@ -34,6 +35,7 @@ export function Clairvoyance({ options }: {options: Options}){
   const {receipt, error} = useTransactionReceipt({provider, transaction})
   const {block} = useBlock({provider, blockNumber: options.options.fork.blockNumber});
   const {callResult} = useTransactionResult({provider, block, transaction});
+  const balances = useBalances({receipt, provider, block});
 
   const addresses: string[] = receipt ? Array.from(new Set([
     receipt.contractAddress,
@@ -74,7 +76,7 @@ export function Clairvoyance({ options }: {options: Options}){
         </Chakra.TabList>
         <Chakra.TabPanels>
           <Chakra.TabPanel>
-            <TransactionSimulation progress={progress} decoder={eventDecoder} receipt={receipt} callResult={callResult} options={options}/>
+            <TransactionSimulation progress={progress} decoder={eventDecoder} receipt={receipt} callResult={callResult} options={options} balances={balances}/>
           </Chakra.TabPanel>
           <Chakra.TabPanel>
             {receipt && receipt.transactionHash ?
