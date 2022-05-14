@@ -28,7 +28,7 @@ export function TransactionDecoding({ decoder, options, from, tx, networkId }: {
     })();
   }, [decoder, options, from, to, networkId, data]);
 
-  return <Decoding decoding={decoding} />;
+  return <Decoding decoding={decoding} showSignature={true} />;
 }
 
 TransactionDecoding.propTypes = {

@@ -5,7 +5,7 @@ import * as Codec from '@truffle/codec';
 import Address from './components/decoding/address';
 import { TreeItem } from './transaction-decoding.util';
 
-export function Decoding({ decoding }: {decoding?:{params: TreeItem[], decoding: Codec.FunctionDecoding | Codec.ConstructorDecoding | Codec.LogDecoding}}) {
+export function Decoding({ decoding, showSignature }: {showSignature: boolean, decoding?:{ params: TreeItem[], decoding: Codec.FunctionDecoding | Codec.ConstructorDecoding | Codec.LogDecoding}}) {
 // ***********************************************************
   // component rendering methods
   // ***********************************************************
@@ -110,9 +110,11 @@ export function Decoding({ decoding }: {decoding?:{params: TreeItem[], decoding:
     return (
       <div className="tx-insight-content">
         <div className="tx-insight-content__tree-component">
+          {showSignature?
           <div>
             Function: <Chakra.Code>{contractName +"." + name + "(" + args + ")"}</Chakra.Code>
           </div>
+          : null }
           <Chakra.OrderedList>{decoding && decoding.params ? decoding.params.map(renderTree): "Loading..."}</Chakra.OrderedList>
         </div>
       </div>
