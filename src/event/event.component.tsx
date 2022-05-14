@@ -36,7 +36,7 @@ export function Event({event, decoder}: {decoder: ProjectDecoder | null, event: 
     if (decodedEvents.length > 0) {
       const decodedEvent = decodedEvents[0]
       eventName = <>{parseInt(event.logIndex)+1}: {decodedEvent.class.typeName + "." + decodedEvent.abi.name}({decodedEvent.abi.inputs.map(input => input.name).join(", ")})</>;
-      eventDetails = <Decoding showSignature={false} decoding={{params: transformTxDecoding(decodedEvent?.arguments), decoding: decodedEvent}} />;
+      eventDetails = <Decoding decoding={{params: transformTxDecoding(decodedEvent?.arguments), decoding: decodedEvent}} showSignature={false}/>;
     } else {
       eventName = <i>{parseInt(event.logIndex)+1}: unknown event</i>;
       eventDetails = <>

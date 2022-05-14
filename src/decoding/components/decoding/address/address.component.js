@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import copyToClipboard from 'copy-to-clipboard';
+import styles from "../../../transaction-decoding.module.css";
 
 const Address = ({
   checksummedRecipientAddress,
@@ -12,11 +12,7 @@ const Address = ({
   const recipientToRender = checksummedRecipientAddress || 'newContract';
 
   return (
-    <div
-      className="tx-insight tx-insight-component tx-insight-component-address"
-    >
-      {recipientToRender}
-    </div>
+    <span className={styles.number}>{recipientToRender}</span>
   );
 };
 

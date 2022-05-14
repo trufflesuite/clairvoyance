@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import {Text} from "@chakra-ui/react";
 import PropTypes from 'prop-types';
 import * as Codec from '@truffle/codec';
 import { transformTxDecoding, TreeItem } from './transaction-decoding.util';
 import {Decoding} from "./decoding.component";
 import { ProjectDecoder } from '@truffle/decoder';
 import { AnyTxtRecord } from 'dns';
+import styles from "./transaction-decoding.module.css";
 
 export function TransactionDecoding({ decoder, options, from, tx, networkId }: {decoder: ProjectDecoder | null, options: AnyTxtRecord, from: string, tx: any, networkId: number}) {
   const {to, data} = tx.toJSON();
@@ -28,7 +30,10 @@ export function TransactionDecoding({ decoder, options, from, tx, networkId }: {
     })();
   }, [decoder, options, from, to, networkId, data]);
 
-  return <Decoding decoding={decoding} showSignature={true} />;
+  return <div>
+    <Text className={styles.header}>Decoding</Text>
+    <Decoding decoding={decoding} showSignature={true}/>
+  </div>
 }
 
 TransactionDecoding.propTypes = {
