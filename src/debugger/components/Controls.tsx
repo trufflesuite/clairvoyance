@@ -85,7 +85,15 @@ const Controls = ({
     );
 
   const statusIndicator =
-    isStepping ? <Chakra.Spinner />
+    isStepping ?
+      <Chakra.Tag colorScheme="orange" size="sm">
+        <Chakra.Spinner size="sm" />
+        <Chakra.Text>&nbsp;Stepping...</Chakra.Text>
+      </Chakra.Tag>
+    : isAtEnd ?
+      <Chakra.Tag colorScheme="teal" variant="solid" size="sm">
+        <Chakra.Text>Transaction ended.</Chakra.Text>
+      </Chakra.Tag>
     : <></>;
 
   return <Chakra.ButtonGroup>
