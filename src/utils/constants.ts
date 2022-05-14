@@ -46,13 +46,3 @@ export const NETWORK_TO_NAME_MAP: any = {
   [MAINNET_CHAIN_ID]: MAINNET_DISPLAY_NAME,
   [LOCALHOST_CHAIN_ID]: LOCALHOST_DISPLAY_NAME,
 };
-
-export function formatBlockNumber(num: number) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
-
-export function formatCurrency(value: number, tokenName: string = "Eth",  decimal = 18) {
-  const valueString = (value * Math.pow(10,-decimal)).toFixed(decimal).replace(/(?<=\d)[.0]*$/, "");
-
-  return `${valueString} ${tokenName}`
-}

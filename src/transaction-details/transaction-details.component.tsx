@@ -3,11 +3,10 @@ import TransactionBreakdownRow from "./transaction-breakdown-row.component";
 import SenderToRecipient from "./sender-to-recipient.component";
 import {Box, Text} from '@chakra-ui/react'
 import styles from "./transaction-details.module.css";
-import { NETWORK_TO_NAME_MAP, formatCurrency, formatBlockNumber, MAINNET_NETWORK_ID } from './transaction-details.util';
-import {useBlock} from "./hooks/useBlock";
+import { NETWORK_TO_NAME_MAP, MAINNET_NETWORK_ID } from '../utils/constants';
+import { formatCurrency, formatBlockNumber } from '../utils/utils';
 
-export function TransactionDetails({ options, from, tx, provider }: any) {
-  const block = useBlock({provider, blockNumber: options.fork.blockNumber});
+export function TransactionDetails({ options, from, tx, block }: any) {
   let gasFee = undefined,
     totalCost = undefined;
   if (block !== undefined) {

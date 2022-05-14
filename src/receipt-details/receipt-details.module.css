@@ -1,0 +1,23 @@
+.header {
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.subHeader {
+  float:right;
+  font-weight: normal;
+}
+
+.receiptDetails {
+  margin-bottom:20px;
+}
+
+.receiptDetails div {
+  text-overflow:ellipsis;
+  overflow:hidden;
+  word-wrap:normal;
+}
+
+.hashBlock {
+  font-family: monospace;
+}

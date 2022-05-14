@@ -6,18 +6,34 @@ import { TransactionDetails} from "../transaction-details/transaction-details.co
 import { Options } from '../types/types';
 import { useGanache } from './hooks/useGanache';
 import { useDecoder } from './hooks/useDecoder';
-import { Debugger } from "src/debugger";
+import { useTransactionResult } from './hooks/useTransactionResult';
 import { useProgress } from "src/transaction-simulation/hooks/useProgress";
 import { useTransactionReceipt } from "src/transaction-simulation/hooks/useTransactionReceipt";
 import { fetchCompilations } from "src/decoding/fetchCompilations";
+import { useBlock } from "./hooks/useBlock";
+import { BaseTransaction } from "@ethereumjs/tx/dist/baseTransaction";
+import Debugger from "src/debugger/components/Debugger";
 
+function makeTx(from: string, baseTx: BaseTransaction<any>): any {
+  const tx = baseTx.toJSON() as any;
+  tx.from = from;
+  // protect against sending transactions with a too-high nonce (which will never complete)
+  // or that already have a signature
+  ["v", "r", "s", "nonce"].forEach((key) => {
+    delete tx[key];
+  });
+  return tx;
+}
 export function Clairvoyance({ options }: {options: Options}){
   const {provider} = useGanache(options.options);
   const decoderOptions = {provider, addresses: [options.to], compilations: [], networkId: options.networkId};
   const {decoder, compilations} = useDecoder(decoderOptions);
 
   const {progress, unsubscribe} = useProgress({provider});
-  const {receipt, error} = useTransactionReceipt({provider, tx: options.tx, from: options.from})
+  const transaction = makeTx(options.from, options.tx);
+  const {receipt, error} = useTransactionReceipt({provider, transaction})
+  const {block} = useBlock({provider, blockNumber: options.options.fork.blockNumber});
+  const {callResult} = useTransactionResult({provider, block, transaction});
 
   const addresses: string[] = receipt ? Array.from(new Set([
     receipt.contractAddress,
@@ -35,9 +51,9 @@ export function Clairvoyance({ options }: {options: Options}){
     unsubscribe();
   }
 
-  if (error) {
-    return <div>Transaction Error: {error.message}</div>
-  }
+  // if (error) {
+  //   return <div>Transaction Error: {error.message}</div>
+  // }
   if (error2) {
     return <div>Decoder Error: {error2.message}</div>
   }
@@ -45,7 +61,7 @@ export function Clairvoyance({ options }: {options: Options}){
   return (
     <Chakra.Box>
       <Chakra.Heading fontSize="larger">Transaction Details</Chakra.Heading>
-      <TransactionDetails options={options.options} from={options.from} tx={options.tx} provider={provider}/>
+      <TransactionDetails options={options.options} from={options.from} tx={options.tx} provider={provider} block={block}/>
       
       <Chakra.Divider/>
       
@@ -58,7 +74,7 @@ export function Clairvoyance({ options }: {options: Options}){
         </Chakra.TabList>
         <Chakra.TabPanels>
           <Chakra.TabPanel>
-            <TransactionSimulation progress={progress} decoder={eventDecoder} receipt={receipt} />
+            <TransactionSimulation progress={progress} decoder={eventDecoder} receipt={receipt} callResult={callResult} options={options}/>
           </Chakra.TabPanel>
           <Chakra.TabPanel>
             {receipt && receipt.transactionHash ?
