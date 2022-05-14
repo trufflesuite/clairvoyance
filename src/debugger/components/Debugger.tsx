@@ -74,7 +74,7 @@ const Debugger = ({
             <Sources session={session} />
           </Chakra.Box>
           <Chakra.Spacer />
-          <Chakra.Box width="30%">
+          <Chakra.Box width="30%" marginTop="6rem" >
             <Variables session={session} />
           </Chakra.Box>
         </Chakra.Flex>
