@@ -1,8 +1,9 @@
-import { AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box } from "@chakra-ui/react";
+import { AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, CircularProgress, Progress } from "@chakra-ui/react";
 import { ProjectDecoder } from "@truffle/decoder"
 import { useEffect, useState } from "react";
 import { Decoding } from "src/decoding/decoding.component";
 import { transformTxDecoding } from "src/decoding/transaction-decoding.util";
+import { Code } from '@chakra-ui/react'
 
 type UnPromisify<T> = T extends Promise<infer U> ? U : T;
 type LogDecodings = UnPromisify<ReturnType<ProjectDecoder["decodeLog"]>>;
@@ -24,23 +25,47 @@ export function Event({event, decoder}: {decoder: ProjectDecoder | null, event: 
         }, {extras: "necessary"});
         setDecodedEvent(_decoded || null);
       } catch(e) {
-        console.error(e);
+        console.log(e);
       }
     })();
   }, [decoder, event]);
+
+  let eventName;
+  let eventDetails;
+  if (decodedEvent) {
+    if (decodedEvent[0]) {
+      eventName = <>{parseInt(event.logIndex)+1}: {decodedEvent[0].class.typeName + "." + decodedEvent[0].abi.name}({decodedEvent[0].abi.inputs.map(input => input.name).join(", ")})</>;
+      eventDetails = <Decoding decoding={transformTxDecoding(decodedEvent[0]?.arguments)} />;
+    } else {
+      eventName = <i>{parseInt(event.logIndex)+1}: unknown event</i>;
+      eventDetails = <>
+        <div>This event couldn't be decoded. Here is what we know:</div>
+        <Code display="block" whiteSpace="pre" lang="json" children={JSON.stringify(event, null, 2)}/>
+      </>;
+    }
+  } else {
+    eventDetails = <>
+      <div>{parseInt(event.logIndex)+1}: decoding event</div>
+      <Progress size='xs' isIndeterminate />
+    </>;
+    eventName = <>Decoding...</>;
+  }
+  eventName = <>
+      {parseInt(event.logIndex)+1}: decoding event <CircularProgress isIndeterminate />
+    </>;
 
   return (
   <AccordionItem>
     <h2>
       <AccordionButton>
         <Box flex='1' textAlign='left'>
-          {decodedEvent && decodedEvent.length > 0 ? <>{decodedEvent[0].class.typeName + "." + decodedEvent[0].abi.name}({decodedEvent[0].abi.inputs.map(input => input.name).join(", ")})</> : <>Decoding...</>}
+          {eventName}
         </Box>
         <AccordionIcon />
       </AccordionButton>
     </h2>
     <AccordionPanel pb={4}>
-      {decodedEvent && decodedEvent.length > 0 ? <Decoding decoding={transformTxDecoding(decodedEvent[0]?.arguments)} /> : <>Decoding...</>}
+      {eventDetails}
     </AccordionPanel>
   </AccordionItem>
   );

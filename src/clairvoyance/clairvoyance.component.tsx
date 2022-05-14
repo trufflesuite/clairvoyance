@@ -13,6 +13,9 @@ import { fetchCompilations } from "src/decoding/fetchCompilations";
 import { useBlock } from "./hooks/useBlock";
 import { BaseTransaction } from "@ethereumjs/tx/dist/baseTransaction";
 import Debugger from "src/debugger/components/Debugger";
+import { Events } from "src/events/events.component";
+import { Progress } from "src/progress/progress.component";
+import { text } from "stream/consumers";
 
 function makeTx(from: string, baseTx: BaseTransaction<any>): any {
   const tx = baseTx.toJSON() as any;
@@ -51,30 +54,38 @@ export function Clairvoyance({ options }: {options: Options}){
     unsubscribe();
   }
 
-  // if (error) {
-  //   return <div>Transaction Error: {error.message}</div>
-  // }
   if (error2) {
     return <div>Decoder Error: {error2.message}</div>
   }
 
   return (
     <Chakra.Box>
-      <Chakra.Heading fontSize="larger">Transaction Details</Chakra.Heading>
-      <TransactionDetails options={options.options} from={options.from} tx={options.tx} provider={provider} block={block}/>
-      
+      <Chakra.Box>
+        <Progress progress={progress} gasLimit={Number(options.tx?.gasLimit || 0)} />
+      </Chakra.Box>
       <Chakra.Divider/>
-      
-      <Chakra.Heading fontSize="larger">Decoding</Chakra.Heading>
-      <TransactionDecoding decoder={decoder} provider={provider} options={options.options} from={options.from} tx={options.tx} networkId={options.networkId} />
       <Chakra.Tabs>
         <Chakra.TabList>
-          <Chakra.Tab>Simulation</Chakra.Tab>
-          <Chakra.Tab>Debugger</Chakra.Tab>
+          <Chakra.Tab>Overview</Chakra.Tab>
+          <Chakra.Tab>Result</Chakra.Tab>
+          <Chakra.Tab>Logs</Chakra.Tab>
+          <Chakra.Tab>Debug</Chakra.Tab>
         </Chakra.TabList>
         <Chakra.TabPanels>
           <Chakra.TabPanel>
+            <Chakra.Heading fontSize="larger">Transaction Details</Chakra.Heading>
+            <TransactionDetails options={options.options} from={options.from} tx={options.tx} provider={provider} block={block}/>
+            
+            <Chakra.Divider/>
+            
+            <Chakra.Heading fontSize="larger">Decoding</Chakra.Heading>
+            <TransactionDecoding decoder={decoder} provider={provider} options={options.options} from={options.from} tx={options.tx} networkId={options.networkId} />
+          </Chakra.TabPanel>
+          <Chakra.TabPanel>
             <TransactionSimulation progress={progress} decoder={eventDecoder} receipt={receipt} callResult={callResult} options={options}/>
+          </Chakra.TabPanel>
+          <Chakra.TabPanel>
+            <Events decoder={decoder} events={receipt?.logs || null} />
           </Chakra.TabPanel>
           <Chakra.TabPanel>
             {receipt && receipt.transactionHash ?
