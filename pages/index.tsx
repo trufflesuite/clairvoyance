@@ -8,8 +8,9 @@ import { Clairvoyance } from '../src/clairvoyance/clairvoyance.component';
 import { ParsedUrlQuery } from 'querystring';
 import { Options } from '../src/types/types';
 import { Box } from '@chakra-ui/react';
-import truffleLogo from './Truffle.png';
-import metamaskLogo from './MetaMask.png';
+import truffleLogo from './truffle-logomark.svg';
+import truffleWord from './truffle-wordmark-dark.svg';
+import metamaskLogo from './MetaMask.svg';
 
 
 function getOptions(query: ParsedUrlQuery): Options{
@@ -78,8 +79,11 @@ const Home: NextPage = () => {
         <title>Clairvoyance</title>
       </Head>
       <Box className="logos">
-      <img src={truffleLogo.src} className="right"/>
-      <img src={metamaskLogo.src}/>
+        <img src={metamaskLogo.src} style={{display:"inline-block"}} height="30" width="162" />
+        <div className="right" style={{display: "flex", alignItems: "center"}}>
+          <img height="12" src={truffleWord.src} style={{marginRight:"8px"}} />
+          <img height="30" src={truffleLogo.src} style={{verticalAlign: "bottom"}}/>
+        </div>
       </Box>
       <Box className="main">
         <Clairvoyance options={options} />

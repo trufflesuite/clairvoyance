@@ -1,14 +1,15 @@
-import { AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box } from "@chakra-ui/react";
+import { AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Progress } from "@chakra-ui/react";
 import { ProjectDecoder } from "@truffle/decoder"
 import { useEffect, useState } from "react";
 import { Decoding } from "src/decoding/decoding.component";
 import { transformTxDecoding } from "src/decoding/transaction-decoding.util";
+import { Code } from '@chakra-ui/react'
 
 type UnPromisify<T> = T extends Promise<infer U> ? U : T;
-type LogDecodings = UnPromisify<ReturnType<ProjectDecoder["decodeLog"]>>;
+export type LogDecodings = UnPromisify<ReturnType<ProjectDecoder["decodeLog"]>>;
 
 export function Event({event, decoder}: {decoder: ProjectDecoder | null, event: any}) {
-  const [decodedEvent, setDecodedEvent] = useState<LogDecodings | null>(null);
+  const [decodedEvents, setDecodedEvents] = useState<LogDecodings | null>(null);
   useEffect(() => {
     (async () => {
       try {
@@ -22,25 +23,47 @@ export function Event({event, decoder}: {decoder: ProjectDecoder | null, event: 
           blockHash: event.blockHash,
           blockNumber: parseInt(event.blockNumber, 16)
         }, {extras: "necessary"});
-        setDecodedEvent(_decoded || null);
+        setDecodedEvents(_decoded || null);
       } catch(e) {
-        console.error(e);
+        console.log(e);
       }
     })();
   }, [decoder, event]);
+
+  let eventName;
+  let eventDetails;
+  if (decodedEvents) {
+    if (decodedEvents.length > 0) {
+      const decodedEvent = decodedEvents[0]
+      eventName = <>{parseInt(event.logIndex)+1}: {decodedEvent.class.typeName + "." + decodedEvent.abi.name}({decodedEvent.abi.inputs.map(input => input.name).join(", ")})</>;
+      eventDetails = <Decoding decoding={{params: transformTxDecoding(decodedEvent?.arguments), decoding: decodedEvent}} />;
+    } else {
+      eventName = <i>{parseInt(event.logIndex)+1}: unknown event</i>;
+      eventDetails = <>
+        <div>This event couldn't be decoded. Here is what we know:</div>
+        <Code display="block" whiteSpace="pre" lang="json" children={JSON.stringify(event, null, 2)}/>
+      </>;
+    }
+  } else {
+    eventDetails = <>
+      <div>{parseInt(event.logIndex)+1}: decoding event</div>
+      <Progress size='xs' isIndeterminate />
+    </>;
+    eventName = <>Decoding...</>;
+  }
 
   return (
   <AccordionItem>
     <h2>
       <AccordionButton>
         <Box flex='1' textAlign='left'>
-          {decodedEvent && decodedEvent.length > 0 ? <>{decodedEvent[0].class.typeName + "." + decodedEvent[0].abi.name}({decodedEvent[0].abi.inputs.map(input => input.name).join(", ")})</> : <>Decoding...</>}
+          {eventName}
         </Box>
         <AccordionIcon />
       </AccordionButton>
     </h2>
     <AccordionPanel pb={4}>
-      {decodedEvent && decodedEvent.length > 0 ? <Decoding decoding={transformTxDecoding(decodedEvent[0]?.arguments)} /> : <>Decoding...</>}
+      {eventDetails}
     </AccordionPanel>
   </AccordionItem>
   );

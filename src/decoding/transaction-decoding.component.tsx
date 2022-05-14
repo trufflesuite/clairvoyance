@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-const inspect = require('browser-util-inspect');
 import * as Codec from '@truffle/codec';
-import { transformTxDecoding } from './transaction-decoding.util';
-import Address from './components/decoding/address';
+import { transformTxDecoding, TreeItem } from './transaction-decoding.util';
 import {Decoding} from "./decoding.component";
+import { ProjectDecoder } from '@truffle/decoder';
+import { AnyTxtRecord } from 'dns';
 
-export function TransactionDecoding({ decoder, options, from, tx, networkId }: any) {
+export function TransactionDecoding({ decoder, options, from, tx, networkId }: {decoder: ProjectDecoder | null, options: AnyTxtRecord, from: string, tx: any, networkId: number}) {
   const {to, data} = tx.toJSON();
-  const [decoding, setDecoding] = useState<[] | void>();
+  const [decoding, setDecoding] = useState<{params: TreeItem[], decoding: Codec.FunctionDecoding | Codec.ConstructorDecoding | Codec.LogDecoding}>();
 
   useEffect(() => {
     (async () => {
@@ -19,11 +19,11 @@ export function TransactionDecoding({ decoder, options, from, tx, networkId }: a
           to,
           input: data,
           blockNumber: null,
-        });
+        }) as Codec.FunctionDecoding | Codec.ConstructorDecoding | Codec.LogDecoding;
 
         // transform tx decoding arguments into tree data
         const params = transformTxDecoding(_decoding?.arguments);
-        setDecoding(params);
+        setDecoding({params, decoding: _decoding});
       }
     })();
   }, [decoder, options, from, to, networkId, data]);
