@@ -101,9 +101,9 @@ const Source = ({
       displayLineNumber
     }`;
 
-    const el = selected && !isMultiLine ? 
+    const el = selected && !isMultiLine ?
       <div style={{paddingLeft: "0.4rem", fontFamily: '"Ubuntu Mono",monospace',whiteSpace: "pre",position:"absolute",left:0, top:0}}>
-          {paddedLineNumber + ' '.repeat(currentSourceRange.start.column + index.toString().length)}
+          {' '.repeat(lineNumbersGutterWidth + currentSourceRange.start.column + 2)}
           <span style={{background:Colors.YELLOW_200}}>
             {currentSourceRange.end.column ? ' '.repeat(currentSourceRange.end.column - currentSourceRange.start.column) : ""}
           </span>

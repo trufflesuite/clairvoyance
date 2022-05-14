@@ -11,7 +11,10 @@ const Debug: NextPage = () => {
   const router = useRouter();
   const provider = useProvider({ url: "http://erigon.dappnode:8545" });
   // convex
-  const transactionHash = "0x53e092e6f25e540d6323af851a1e889276096d58ec25495aef4500467ef2753c";
+  // const transactionHash = "0x53e092e6f25e540d6323af851a1e889276096d58ec25495aef4500467ef2753c";
+
+  // airswap
+  const transactionHash = "0x00eea58bb2b6901480f0a51129558a9926da3a4e31422a3270a33da808ec2842";
 
   const fetchCompilations = async (address: string) => {
     try {
