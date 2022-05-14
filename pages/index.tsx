@@ -7,10 +7,11 @@ import Common from '@ethereumjs/common';
 import { Clairvoyance } from '../src/clairvoyance/clairvoyance.component';
 import { ParsedUrlQuery } from 'querystring';
 import { Options } from '../src/types/types';
-import { Box } from '@chakra-ui/react';
+import { Text, Box } from '@chakra-ui/react';
 import truffleLogo from './truffle-logomark.svg';
 import truffleWord from './truffle-wordmark-dark.svg';
 import metamaskLogo from './MetaMask.svg';
+import ganacheLogo from "./ganache-logo-h-dark.svg"
 
 
 function getOptions(query: ParsedUrlQuery): Options{
@@ -87,6 +88,15 @@ const Home: NextPage = () => {
       </Box>
       <Box className="main">
         <Clairvoyance options={options} />
+      </Box>
+      <Box style={{textAlign:"center", padding:"1em 0"}}>
+      <div style={{color:"#5E464D", fontSize:".6em"}}>
+          <em>simulation made possible by:</em>
+        </div>
+        <img alt="Ganache" style={{height:"32px",      display: "inline-block"}} src={ganacheLogo.src} />
+        <div style={{color:"#5E464D", marginTop:"-.7em", fontSize:".6em"}}>
+          <em>forking in the browser</em>
+        </div>
       </Box>
     </div>
   )
