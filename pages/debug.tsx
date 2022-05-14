@@ -10,7 +10,8 @@ import axios from "axios";
 const Debug: NextPage = () => {
   const router = useRouter();
   const provider = useProvider({ url: "http://erigon.dappnode:8545" });
-  const transactionHash = "0x12a339d1cb4014974199fdd21f9474b1b6909035a4c3d208165f1f3ba433416f";
+  // convex
+  const transactionHash = "0x53e092e6f25e540d6323af851a1e889276096d58ec25495aef4500467ef2753c";
 
   const fetchCompilations = async (address: string) => {
     try {

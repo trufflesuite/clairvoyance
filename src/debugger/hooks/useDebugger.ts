@@ -115,7 +115,7 @@ async function initializeDebugger({
 interface FetchExternalForDebuggerOptions {
   session: Session;
   fetchCompilations: FetchCompilations;
-  setFetchProgress: (progress: number) => void;
+  setFetchProgress: (modify: (progress: number) => number) => void;
 }
 
 async function fetchExternalForDebugger({
@@ -141,7 +141,10 @@ async function fetchExternalForDebugger({
     await session.addExternalCompilations(shimmedCompilations);
 
     setFetchProgress(
-      100 * (index + 1) / addresses.length
+      progress => Math.max(
+        progress,
+        100 * (index + 1) / addresses.length
+      )
     );
   }
 }
