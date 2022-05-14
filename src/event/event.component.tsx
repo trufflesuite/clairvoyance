@@ -1,4 +1,4 @@
-import { AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, CircularProgress, Progress } from "@chakra-ui/react";
+import { AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Box, Progress } from "@chakra-ui/react";
 import { ProjectDecoder } from "@truffle/decoder"
 import { useEffect, useState } from "react";
 import { Decoding } from "src/decoding/decoding.component";
@@ -6,10 +6,10 @@ import { transformTxDecoding } from "src/decoding/transaction-decoding.util";
 import { Code } from '@chakra-ui/react'
 
 type UnPromisify<T> = T extends Promise<infer U> ? U : T;
-type LogDecodings = UnPromisify<ReturnType<ProjectDecoder["decodeLog"]>>;
+export type LogDecodings = UnPromisify<ReturnType<ProjectDecoder["decodeLog"]>>;
 
 export function Event({event, decoder}: {decoder: ProjectDecoder | null, event: any}) {
-  const [decodedEvent, setDecodedEvent] = useState<LogDecodings | null>(null);
+  const [decodedEvents, setDecodedEvents] = useState<LogDecodings | null>(null);
   useEffect(() => {
     (async () => {
       try {
@@ -23,7 +23,7 @@ export function Event({event, decoder}: {decoder: ProjectDecoder | null, event: 
           blockHash: event.blockHash,
           blockNumber: parseInt(event.blockNumber, 16)
         }, {extras: "necessary"});
-        setDecodedEvent(_decoded || null);
+        setDecodedEvents(_decoded || null);
       } catch(e) {
         console.log(e);
       }
@@ -32,10 +32,11 @@ export function Event({event, decoder}: {decoder: ProjectDecoder | null, event: 
 
   let eventName;
   let eventDetails;
-  if (decodedEvent) {
-    if (decodedEvent[0]) {
-      eventName = <>{parseInt(event.logIndex)+1}: {decodedEvent[0].class.typeName + "." + decodedEvent[0].abi.name}({decodedEvent[0].abi.inputs.map(input => input.name).join(", ")})</>;
-      eventDetails = <Decoding decoding={transformTxDecoding(decodedEvent[0]?.arguments)} />;
+  if (decodedEvents) {
+    if (decodedEvents.length > 0) {
+      const decodedEvent = decodedEvents[0]
+      eventName = <>{parseInt(event.logIndex)+1}: {decodedEvent.class.typeName + "." + decodedEvent.abi.name}({decodedEvent.abi.inputs.map(input => input.name).join(", ")})</>;
+      eventDetails = <Decoding decoding={{params: transformTxDecoding(decodedEvent?.arguments), decoding: decodedEvent}} />;
     } else {
       eventName = <i>{parseInt(event.logIndex)+1}: unknown event</i>;
       eventDetails = <>
@@ -50,9 +51,6 @@ export function Event({event, decoder}: {decoder: ProjectDecoder | null, event: 
     </>;
     eventName = <>Decoding...</>;
   }
-  eventName = <>
-      {parseInt(event.logIndex)+1}: decoding event <CircularProgress isIndeterminate />
-    </>;
 
   return (
   <AccordionItem>

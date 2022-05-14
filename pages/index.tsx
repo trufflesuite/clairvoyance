@@ -80,7 +80,7 @@ const Home: NextPage = () => {
       </Head>
       <Box className="logos">
         <img src={metamaskLogo.src} style={{display:"inline-block"}} height="30" width="162" />
-        <div className="right" style={{height:"30px"}}>
+        <div className="right" style={{display: "flex", alignItems: "center"}}>
           <img height="12" src={truffleWord.src} style={{marginRight:"8px"}} />
           <img height="30" src={truffleLogo.src} style={{verticalAlign: "bottom"}}/>
         </div>

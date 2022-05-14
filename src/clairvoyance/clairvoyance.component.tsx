@@ -63,7 +63,7 @@ export function Clairvoyance({ options }: {options: Options}){
   return (
     <Chakra.Box>
       <Chakra.Box>
-        <Progress progress={progress} gasLimit={Number(options.tx?.gasLimit || 0)} />
+        <Progress receipt={receipt} progress={progress} gasLimit={Number(options.tx?.gasLimit || 0)} />
       </Chakra.Box>
       <Chakra.Divider/>
       <Chakra.Tabs>
