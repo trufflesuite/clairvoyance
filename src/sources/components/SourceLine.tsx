@@ -14,12 +14,12 @@ interface HighlightProps {
 
 const Row = styled.div`
   background: ${({ selected }: HighlightProps) =>
-    selected ? `${backgroundHighlight}` : `${backgroundInherit}`};
+    selected ? `${backgroundHighlight}` : `inherit`};
 /*border-color: ${({ selected }: HighlightProps) =>
     selected ? `${borderHighlight}` : `${backgroundInherit}`};*/
-  border-width: 1px;
+  border-width: 0;
   border-style: solid;
-  border-radius: 0.4rem;
+  border-radius: 0rem;
   width: fit-content;
   min-width: 100%;
 
@@ -84,6 +84,7 @@ const SourceLine = ({
 
   return (
     <Row
+      style={{zIndex:1, position:"relative"}}
       key={`contract-source-${lineNumber}`}
       selected={selected}
       ref={lineRef}
