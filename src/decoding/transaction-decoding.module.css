@@ -25,14 +25,16 @@
   font-weight:bold;
 }
 
+.dataBlock ul {
+  -webkit-margin-start:0px;
+  margin-inline-start:0px !important;
+}
+.dataBlock .noMargin,
+.dataBlock .noMargin>li {
+  margin-left:0px;
+}
 .header {
   font-weight:bold;
   margin-top:10px;
 }
 
-.noMargin,
-.noMargin>li {
-  margin-left:0px;
-  -webkit-margin-start:0px;
-  margin-inline-start:0px !important;
-}

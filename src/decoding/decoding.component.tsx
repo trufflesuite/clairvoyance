@@ -73,17 +73,21 @@ export function Decoding({ decoding, showSignature }: {showSignature: boolean,  
   };
 
   const renderTransactionDecoding = () => {
+    if (!decoding || !decoding.params) {
+      return <Chakra.Text fontSize="sm" className={styles.dataBlock}>Loading...</Chakra.Text>;
+    }
+
     const contractName = decoding && decoding.decoding && decoding.decoding.class.typeName
     const name = decoding && decoding.decoding && decoding.decoding.abi.type === "function" ? decoding.decoding.abi.name : "constructor";
         
     return showSignature ?
     <Chakra.Text fontSize="sm" className={styles.dataBlock}>
       <span className={styles.keyword}>function</span> <span className={styles.title}>{contractName}.{name}</span>(
-        <Chakra.UnorderedList>{decoding && decoding.params ? decoding.params.map((e:any,i:number) => renderTree(e,i,decoding.params.length)): "Loading..."}</Chakra.UnorderedList>
+        <Chakra.UnorderedList>{ decoding.params.map((e:any,i:number) => renderTree(e,i,decoding.params.length))}</Chakra.UnorderedList>
       )
     </Chakra.Text> :
     <Chakra.Text fontSize="sm" className={styles.dataBlock}>
-      <Chakra.UnorderedList className={styles.noMargin}>{decoding && decoding.params ? decoding.params.map((e:any,i:number) => renderTree(e,i,decoding.params.length)): "Loading..."}</Chakra.UnorderedList>
+      <Chakra.UnorderedList className={styles.noMargin}>{decoding.params.map((e:any,i:number) => renderTree(e,i,decoding.params.length))}</Chakra.UnorderedList>
   </Chakra.Text>
 
   };
