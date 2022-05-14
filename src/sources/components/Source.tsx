@@ -6,6 +6,7 @@ import React, {
   useLayoutEffect,
   MutableRefObject
 } from "react";
+import * as Colors from "../colors";
 import * as Chakra from "@chakra-ui/react";
 import unified from "unified";
 import stringify from "rehype-dom-stringify";
@@ -91,21 +92,39 @@ const Source = ({
         )
       )
     );
+    const isMultiLine =  !!currentSourceRange && currentSourceRange.start.line !== currentSourceRange.end.line;
 
-    return <SourceLine
-      source={source}
-      lineContents={line}
-      lineNumber={index}
-      key={`${id}-line-${index}`}
-      selected={selected}
-      lineRef={lineRef}
-      lineNumbersGutterWidth={lineNumbersGutterWidth}
-    />;
+    const displayLineNumber = (index + 1).toString();
+    const paddedLineNumber = `${
+      " ".repeat(lineNumbersGutterWidth - displayLineNumber.length)
+    }${
+      displayLineNumber
+    }`;
+
+    const el = selected && !isMultiLine ? 
+      <div style={{paddingLeft: "0.4rem", fontFamily: '"Ubuntu Mono",monospace',whiteSpace: "pre",position:"absolute",left:0, top:0}}>
+          {paddedLineNumber + ' '.repeat(currentSourceRange.start.column + index.toString().length)}
+          <span style={{background:Colors.YELLOW_200}}>
+            {currentSourceRange.end.column ? ' '.repeat(currentSourceRange.end.column - currentSourceRange.start.column) : ""}
+          </span>
+        </div> : null;
+    return <div style={{position:"relative"}}>
+      <SourceLine
+        source={source}
+        lineContents={line}
+        lineNumber={index}
+        key={`${id}-line-${index}`}
+        selected={isMultiLine ? selected : false}
+        lineRef={lineRef}
+        lineNumbersGutterWidth={lineNumbersGutterWidth}
+      />
+      {el}
+    </div>;
   });
 
   return <Chakra.Box>
     <Chakra.Heading>{sourcePath}</Chakra.Heading>
-    <Chakra.Box height="65vh" overflow="scroll">
+    <Chakra.Box height="65vh" backgroundColor={Colors.CHOCOLATE_200} overflow="scroll">
       <SyntaxStyle>{sourceLines}</SyntaxStyle>
     </Chakra.Box>
   </Chakra.Box>;
