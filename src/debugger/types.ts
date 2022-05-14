@@ -23,6 +23,9 @@ export interface Session {
 
   continueUntilBreakpoint(): Promise<void>;
   stepNext(): Promise<void>;
+  stepOver(): Promise<void>;
+  stepInto(): Promise<void>;
+  stepOut(): Promise<void>;
   reset(): Promise<void>;
 }
 
