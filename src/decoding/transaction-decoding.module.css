@@ -1,0 +1,36 @@
+.dataBlock {
+  font-family: monospace;
+  background-color:#eee;
+  padding:10px 20px;
+}
+.dataBlock li {
+  margin-left:20px;
+  list-style-type: none;
+}
+
+.dataBlock .keyword {
+  color:#ea1bc0;
+  font-weight:bold;
+}
+.dataBlock .number,
+.dataBlock .address,
+.dataBlock .raw,
+.dataBlock .literal {
+  color:#b3004f;
+}
+.dataBlock .title {
+  color: #47BAA7;
+  font-weight:bold;
+}
+
+.header {
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.noMargin,
+.noMargin>li {
+  margin-left:0px;
+  -webkit-margin-start:0px;
+  margin-inline-start:0px !important;
+}
