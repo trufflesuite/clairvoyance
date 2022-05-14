@@ -42,6 +42,24 @@ const getSessionActions = (session: Debugger.Session): {
     shouldDisable: shouldDisableForwardStepping,
     step: async () => { await session.stepNext(); }
   },
+  over: {
+    Icon: () => <Chakra.Icon as={Icons.MdFastForward} />,
+    label: "Step over",
+    shouldDisable: shouldDisableForwardStepping,
+    step: async () => { await session.stepOver(); }
+  },
+  into: {
+    Icon: () => <Chakra.Icon as={Icons.MdDownload} />,
+    label: "Step into",
+    shouldDisable: shouldDisableForwardStepping,
+    step: async () => { await session.stepInto(); }
+  },
+  out: {
+    Icon: () => <Chakra.Icon as={Icons.MdUpload} />,
+    label: "Step out",
+    shouldDisable: shouldDisableForwardStepping,
+    step: async () => { await session.stepOut(); }
+  },
   reset: {
     Icon: () => <Chakra.Icon as={Icons.MdReplay} />,
     label: "Reset to beginning",
