@@ -34,7 +34,7 @@ export const useVariables = ({
 
     await new Promise(accept => setTimeout(accept, 0));
 
-    return await session.variables({ indicateUnknown: true });
+    return await session.variables();
   });
 
   useEffect(() => {

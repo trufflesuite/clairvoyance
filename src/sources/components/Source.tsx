@@ -108,7 +108,7 @@ const Source = ({
             {currentSourceRange.end.column ? ' '.repeat(currentSourceRange.end.column - currentSourceRange.start.column) : ""}
           </span>
         </div> : null;
-    return <div style={{position:"relative"}}>
+    return <div style={{position:"relative"}} key={index}>
       <SourceLine
         source={source}
         lineContents={line}

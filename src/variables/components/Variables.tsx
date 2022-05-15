@@ -4,6 +4,7 @@ import * as Chakra from "@chakra-ui/react";
 import * as Codec from "@truffle/codec";
 
 import type * as Debugger from "src/debugger";
+import { Result } from "src/decoding/Result";
 import { useVariables } from "../hooks/useVariables";
 
 const inspect = require("browser-util-inspect");
@@ -33,12 +34,15 @@ export const Variables = ({
         </Chakra.Thead>
         <Chakra.Tbody>{
           Object.entries(variables)
-            .map(([identifier, result], index) => <Chakra.Tr key={identifier}>
-              <Chakra.Td>{identifier}</Chakra.Td>
-              <Chakra.Td>{
-                inspect(new Codec.Export.ResultInspector(result))
-              }</Chakra.Td>
-            </Chakra.Tr>)
+            .map(([identifier, result], index) => {
+              console.debug("%s: %o", identifier, result);
+              return <Chakra.Tr key={identifier}>
+                <Chakra.Td>{identifier}</Chakra.Td>
+                <Chakra.Td>
+                  <Result result={result} />
+                </Chakra.Td>
+              </Chakra.Tr>
+            })
         }</Chakra.Tbody>
       </Chakra.Table>
     </Chakra.TableContainer>
