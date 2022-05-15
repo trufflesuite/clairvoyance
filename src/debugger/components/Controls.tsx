@@ -32,7 +32,7 @@ const getSessionActions = (session: Debugger.Session): {
 } => ({
   continue: {
     Icon: () => <Chakra.Icon as={Icons.MdLabel} />,
-    label: "Continue until breakpoint",
+    label: "Run to end",
     shouldDisable: shouldDisableForwardStepping,
     step: async () => { await session.continueUntilBreakpoint(); }
   },
