@@ -54,7 +54,7 @@ export function TransactionDetails({ options, from, tx, block }: any) {
     <TransactionBreakdownRow label="Gas fee (maximum)" value={values.gasFeeValue} />
     <TransactionBreakdownRow label="Total" value={values.totalCostValue} />
     
-    <Box className={styles.header}>Data</Box>
+    <Box className={styles.header}>Raw Data</Box>
     <Text fontSize="sm" className={styles.dataBlock}>0x{tx.data}</Text>
   </Box>
 };

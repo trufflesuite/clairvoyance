@@ -31,7 +31,7 @@ export function TransactionDecoding({ decoder, options, from, tx, networkId }: {
   }, [decoder, options, from, to, networkId, data]);
 
   return <div>
-    <Text className={styles.header}>Contract call</Text>
+    <Text className={styles.header}>Decoded Data</Text>
     <Decoding decoding={decoding} showSignature={true}/>
   </div>
 }
