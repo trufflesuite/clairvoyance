@@ -20,7 +20,6 @@ export function ReceiptDetails({ options, receipt, callResult }: any) {
   }
   
   return (<Box className={styles.receiptDetails}>
-
     <Box className={styles.header}>Transaction</Box>
     <ReceiptBreakdownRow label="Status" value={getStatus(receipt?.status)} />
     <ReceiptBreakdownRow label="Type" value={getType(receipt?.type)} />
@@ -31,8 +30,5 @@ export function ReceiptDetails({ options, receipt, callResult }: any) {
     <ReceiptBreakdownRow label="Gas Used" value={gasUsed || "Loading..."} />
     <ReceiptBreakdownRow label="Gas Price" value={gasPrice || "Loading..."} />
     <ReceiptBreakdownRow label="Gas Cost" value={cost || "Loading..."} />
-    
-    <Box className={styles.header}>Hash</Box>
-    <Text fontSize="sm" className={styles.hashBlock}>{receipt?.transactionHash || "Loading..."}</Text>
   </Box>)
 }
