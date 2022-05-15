@@ -40,6 +40,9 @@ export function Decoding({ decoding, showSignature }: {showSignature: boolean,  
             const address = value?.asAddress;
             return (<Address addressOnly checksummedRecipientAddress={address} />);
           }
+          case 'string': {
+            return <span className={styles.string}>"{value.asString}"</span>;
+          }
           case 'array':
             return (
                 <div>

@@ -21,6 +21,10 @@
 .dataBlock .literal {
   color:#b3004f;
 }
+
+.dataBlock .string {
+  color:#e4a663;
+}
 .dataBlock .title {
   color: #47BAA7;
   font-weight:bold;
