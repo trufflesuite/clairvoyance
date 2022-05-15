@@ -76,7 +76,7 @@ export function Decoding({ decoding, showSignature }: {showSignature: boolean,  
       const closeGroupChar = CLOSE_GROUP_CHAR_MAP[typeClass];
       return <div>
         <details>
-          <summary>
+          <summary style={{cursor: "pointer"}}>
             <span>
               <span className={styles.keyword}>{typeClass}</span>  {name} = {openGroupChar}<span className={styles.args}>...{closeGroupChar}{terminator}</span>
             </span>
@@ -104,12 +104,12 @@ export function Decoding({ decoding, showSignature }: {showSignature: boolean,  
     if (showSignature) {
       return <Chakra.Text fontSize="sm" className={styles.dataBlock}>
         <details>
-          <summary>
+          <summary style={{cursor: "pointer"}}>
           {renderSignature(contractName, name, decoding.params)}
           </summary>
           { decoding.params.map((e:any,i:number) => renderTree(e,i,decoding.params.length))}
           )
-          </details>
+        </details>
       </Chakra.Text>;
     } else {
       
