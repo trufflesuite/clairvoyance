@@ -1,11 +1,12 @@
+.header {
+  font-weight:bold;
+  margin-top:10px;
+}
+
 .dataBlock {
   font-family: monospace;
   background-color:#eee;
   padding:10px 20px;
-}
-.dataBlock li {
-  margin-left:20px;
-  list-style-type: none;
 }
 
 .dataBlock .keyword {
@@ -24,17 +25,22 @@
   color: #47BAA7;
   font-weight:bold;
 }
-
-.dataBlock ul {
-  -webkit-margin-start:0px;
-  margin-inline-start:0px !important;
-}
-.dataBlock .noMargin,
-.dataBlock .noMargin>li {
+.noMargin .dataBlock>div{
   margin-left:0px;
 }
-.header {
-  font-weight:bold;
-  margin-top:10px;
+
+.dataBlock details[open]>summary>span>.args {
+  display:none;
 }
 
+.dataBlock ::marker {
+  color: #aaa;
+}
+
+.dataBlock summary {
+  list-style-position: outside;
+}
+
+.dataBlock div {
+  margin-left:20px;
+}

@@ -6,6 +6,16 @@ import Address from './components/decoding/address';
 import { TreeItem } from './transaction-decoding.util';
 import styles from "./transaction-decoding.module.css";
 
+const OPEN_GROUP_CHAR_MAP:any = {
+  array: "[",
+  struct: "{"
+};
+const CLOSE_GROUP_CHAR_MAP:any = {
+  array: "]",
+  struct: "}"
+};
+
+
 export function Decoding({ decoding, showSignature }: {showSignature: boolean,  decoding?:{ params: TreeItem[], decoding: Codec.FunctionDecoding | Codec.ConstructorDecoding | Codec.LogDecoding}}) {
 // ***********************************************************
   // component rendering methods
@@ -21,34 +31,33 @@ export function Decoding({ decoding, showSignature }: {showSignature: boolean,  
         switch (typeClass) {
           case 'int':
           case 'uint':
-            return (<span className={styles.number}>{[value.asBN || value.asString].toString()}</span>);
+            return <span className={styles.number}>{[value.asBN || value.asString].toString()}</span>;
           case 'bytes':
             return (
               <span className={styles.hex}>{value.asHex}</span>
             );
-          case 'array':
-            return (
-                <Chakra.UnorderedList>
-                  {value.map((itemValue: any, index: any) => {
-                    return (
-                      <li key={`${typeClass}-${index}`}>
-                        {renderLeaf({
-                          typeClass: itemValue.type?.typeClass,
-                          value: itemValue.value,
-                          kind: itemValue.kind,
-                        })}{index === value.length - 1 ? "": ","}
-                      </li>
-                    );
-                  })}
-                </Chakra.UnorderedList>
-            );
-
           case 'address': {
             const address = value?.asAddress;
             return (<Address addressOnly checksummedRecipientAddress={address} />);
           }
+          case 'array':
+            return (
+                <div>
+                  {value.map((itemValue: any, index: any) => {
+                    return (
+                      <div>
+                        {renderLeaf({
+                          typeClass: itemValue.type?.typeClass,
+                          value: itemValue.value,
+                          kind: itemValue.kind
+                        })}{index === value.length - 1 ? "": ","}
+                      </div>
+                    );
+                  })}
+                </div>
+            );
           default:
-            return (<span className={styles.raw}>{inspect(new Codec.Format.Utils.Inspect.ResultInspector(value))}</span>);
+            return (<div><span className={styles.raw}>{inspect(new Codec.Format.Utils.Inspect.ResultInspector(value))}</span></div>);
         }
     }
   };
@@ -58,19 +67,28 @@ export function Decoding({ decoding, showSignature }: {showSignature: boolean,  
     index: any,
     elementCount: number
   ) => {
-    const isLast = index === elementCount - 1;
-    const openGroupChar = typeClass==="array" ? "[":
-                          typeClass==="struct"? "{":
-                          "";
-    const closeGroupChar = typeClass==="array" ? "]":
-                          typeClass==="struct"? "}":
-                          "";
-    return <Chakra.ListItem key={`${typeClass}-${index}`}>
-      <span className={styles.keyword}>{typeClass}</span>  {name} = {openGroupChar}
-        {children ? children.map((e:any,i:number) => renderTree(e,i,children.length)): renderLeaf({ name, typeClass, type, value, kind })}
-        {closeGroupChar}{isLast ? "": ","}
-    </Chakra.ListItem>
+    const terminator = index === elementCount - 1 ? "" :","
+    if (typeClass === "array" || typeClass === "struct") {
+      const openGroupChar = OPEN_GROUP_CHAR_MAP[typeClass];
+      const closeGroupChar = CLOSE_GROUP_CHAR_MAP[typeClass];
+      return <div>
+        <details>
+          <summary>
+            <span>
+              <span className={styles.keyword}>{typeClass}</span>  {name} = {openGroupChar}<span className={styles.args}>...{closeGroupChar}{terminator}</span>
+            </span>
+          </summary>
+          {children ? children.map((e:any,i:number) => renderTree(e,i,children.length)): renderLeaf({ name, typeClass, type, value, kind })}
+          {closeGroupChar}{terminator}
+        </details>
+      </div>;
+      } else {
+        return <div>
+          <span className={styles.keyword}>{typeClass}</span>  {name} = {renderLeaf({ name, typeClass, type, value, kind })}{terminator}
+        </div>
+      }
   };
+
 
   const renderTransactionDecoding = () => {
     if (!decoding || !decoding.params) {
@@ -80,16 +98,37 @@ export function Decoding({ decoding, showSignature }: {showSignature: boolean,  
     const contractName = decoding && decoding.decoding && decoding.decoding.class.typeName
     const name = decoding && decoding.decoding && decoding.decoding.abi.type === "function" ? decoding.decoding.abi.name : "constructor";
         
-    return showSignature ?
-    <Chakra.Text fontSize="sm" className={styles.dataBlock}>
-      <span className={styles.keyword}>function</span> <span className={styles.title}>{contractName}.{name}</span>(
-        <Chakra.UnorderedList>{ decoding.params.map((e:any,i:number) => renderTree(e,i,decoding.params.length))}</Chakra.UnorderedList>
-      )
-    </Chakra.Text> :
-    <Chakra.Text fontSize="sm" className={styles.dataBlock}>
-      <Chakra.UnorderedList className={styles.noMargin}>{decoding.params.map((e:any,i:number) => renderTree(e,i,decoding.params.length))}</Chakra.UnorderedList>
-  </Chakra.Text>
-
+    if (showSignature) {
+      return <Chakra.Text fontSize="sm" className={styles.dataBlock}>
+        <details>
+          <summary>
+          {renderSignature(contractName, name, decoding.params)}
+          </summary>
+          { decoding.params.map((e:any,i:number) => renderTree(e,i,decoding.params.length))}
+          )
+          </details>
+      </Chakra.Text>;
+    } else {
+      
+      return <div className={styles.noMargin}>
+        <Chakra.Text fontSize="sm" className={styles.dataBlock}>
+          {decoding.params.map((e:any,i:number) => renderTree(e,i,decoding.params.length))}
+        </Chakra.Text>
+      </div>;
+    }
   };
+
   return <div className="tx-insight">{renderTransactionDecoding()}</div>;
+}
+
+
+function renderSignature(contractName: string, name: string, args: any[]) {
+  return <span>
+    <span className={styles.keyword}>function</span> <span className={styles.title}>{contractName}</span>.<span className={styles.title}>{name}</span>(
+    <span className={styles.args}>
+      {args.map((arg, i) => 
+        <span><span className={styles.keyword}>{arg.typeClass}</span> {arg.name}{(i === args.length - 1) ? "": ", "}</span> 
+      )})
+    </span>
+  </span>;
 }
