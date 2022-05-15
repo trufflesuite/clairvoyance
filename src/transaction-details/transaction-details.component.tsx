@@ -6,37 +6,24 @@ import styles from "./transaction-details.module.css";
 import { NETWORK_TO_NAME_MAP, MAINNET_NETWORK_ID } from '../utils/constants';
 import { formatCurrency, formatBlockNumber } from '../utils/utils';
 
-export function TransactionDetails({ options, from, tx, block }: any) {
-  let gasFee = undefined,
-    totalCost = undefined;
-  if (block !== undefined) {
-    const maxGasFee = parseInt(block.baseFeePerGas);
-    gasFee = maxGasFee * parseInt(tx.gasLimit);
-    totalCost = gasFee + parseInt(tx.value);
-  }
-
-  const networkId: string = options.chain.networkId,
-    chainId: string = "0x" + options.chain.chainId.toString(16),
-    nonce = "0x" + tx.nonce.toString(16),
+export function TransactionDetails({ options, from, tx }: any) {
+  const networkId = options.chain.networkId,
     networkName = NETWORK_TO_NAME_MAP[networkId],
-    tokenName = networkId === MAINNET_NETWORK_ID ? "Eth": `${networkName}Eth`,
-    to = tx.to === undefined ?"Contract deploy" : tx.to.toString(),
-    blockNumber = formatBlockNumber(options.fork.blockNumber),
-    amount = formatCurrency(parseInt(tx.value), tokenName),
-    gasFeeValue = gasFee === undefined? "Loading..." : formatCurrency(gasFee, tokenName),
-    totalCostValue = totalCost === undefined? "Loading..." : formatCurrency(totalCost, tokenName);
+    tokenName = networkId === MAINNET_NETWORK_ID ? "Eth": `${networkName}Eth`;
 
   const values = {
-    to,
-    from,
     networkName,
     networkId,
-    nonce,
-    chainId,
-    blockNumber,
-    amount,
-    gasFeeValue,
-    totalCostValue
+    chainId: "0x" + options.chain.chainId.toString(16),
+    nonce: "0x" + tx.nonce.toString(16),
+    from: tx.from,
+    to: tx.to === undefined ?"Contract deploy" : tx.to.toString(),
+    blockNumber: formatBlockNumber(options.fork.blockNumber + 1),
+    amount: formatCurrency(parseInt(tx.value), tokenName),
+    gasLimit: tx.gasLimit.toString(),
+    maxPriorityFeePerGas: formatCurrency(tx.maxPriorityFeePerGas, tokenName),
+    maxFeePerGas: formatCurrency(tx.maxFeePerGas, tokenName),
+    gasPrice: formatCurrency(tx.gasPrice, tokenName)
   };
 
   return <Box className={styles.transactionDetails}>
@@ -46,14 +33,16 @@ export function TransactionDetails({ options, from, tx, block }: any) {
     <TransactionBreakdownRow label="Network" value={values.networkName} />
     <TransactionBreakdownRow label="Chain Id" value={values.chainId} />
     <TransactionBreakdownRow label="Network Id" value={values.networkId} />
-    <TransactionBreakdownRow label="Block Number" value={values.blockNumber} />
+    <TransactionBreakdownRow label="Block number" value={values.blockNumber} tooltip="The block number in which the transaction will be simulated"/>
 
     <Box className={styles.header}>Transaction</Box>
     <TransactionBreakdownRow label="Nonce" value={values.nonce} />
     <TransactionBreakdownRow label="Amount" value={values.amount} />
-    <TransactionBreakdownRow label="Gas fee (maximum)" value={values.gasFeeValue} />
-    <TransactionBreakdownRow label="Total" value={values.totalCostValue} />
-    
+    <TransactionBreakdownRow label="Gas limit" value={values.gasLimit} />
+    <TransactionBreakdownRow label="Gas price" value={values.gasPrice} hideIfUndefined={true}/>
+    <TransactionBreakdownRow label="Max priority fee per gas" value={values.maxPriorityFeePerGas} hideIfUndefined={true}/>
+    <TransactionBreakdownRow label="Max fee per gas" value={values.maxFeePerGas} hideIfUndefined={true}/>
+
     <Box className={styles.header}>Raw Data</Box>
     <Text fontSize="sm" className={styles.dataBlock}>0x{tx.data}</Text>
   </Box>

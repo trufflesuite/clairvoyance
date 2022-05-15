@@ -4,6 +4,9 @@ export function formatBlockNumber(num: number) {
 }
 
 export function formatCurrency(value: number, tokenName: string = "Eth",  decimal = 18) {
+  if (value === undefined) {
+    return undefined;
+  }
   const valueString = (value * Math.pow(10,-decimal)).toFixed(decimal).replace(/(?<=\d)[.0]*$/, "");
 
   return `${valueString} ${tokenName}`

@@ -16,7 +16,6 @@ import { BaseTransaction } from "@ethereumjs/tx/dist/baseTransaction";
 import Debugger from "src/debugger/components/Debugger";
 import { Events } from "src/events/events.component";
 import { Progress } from "src/progress/progress.component";
-import { text } from "stream/consumers";
 
 function makeTx(from: string, baseTx: BaseTransaction<any>): any {
   const tx = baseTx.toJSON() as any;
@@ -76,7 +75,7 @@ export function Clairvoyance({ options }: {options: Options}){
         <Chakra.TabPanels>
           <Chakra.TabPanel>
             <Chakra.Heading fontSize="larger">Transaction Details</Chakra.Heading>
-            <TransactionDetails options={options.options} from={options.from} tx={options.tx} provider={provider} block={block}/>
+            <TransactionDetails options={options.options} from={options.from} tx={options.tx} provider={provider} />
             <TransactionDecoding decoder={decoder} provider={provider} options={options.options} from={options.from} tx={options.tx} networkId={options.networkId} />
           </Chakra.TabPanel>
           <Chakra.TabPanel>
