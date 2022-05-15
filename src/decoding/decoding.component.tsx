@@ -86,7 +86,7 @@ export function Decoding({ decoding, showSignature }: {showSignature: boolean,  
         </details>
       </div>;
       } else {
-        return <div>
+        return <div style={{cursor: "cursor"}}>
           <span className={styles.keyword}>{typeClass}</span>  {name} = {renderLeaf({ name, typeClass, type, value, kind })}{terminator}
         </div>
       }
