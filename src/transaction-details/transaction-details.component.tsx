@@ -16,7 +16,7 @@ export function TransactionDetails({ options, from, tx }: any) {
     networkId,
     chainId: "0x" + options.chain.chainId.toString(16),
     nonce: "0x" + tx.nonce.toString(16),
-    from: tx.from,
+    from: from,
     to: tx.to === undefined ?"Contract deploy" : tx.to.toString(),
     blockNumber: formatBlockNumber(options.fork.blockNumber + 1),
     amount: formatCurrency(parseInt(tx.value), tokenName),
