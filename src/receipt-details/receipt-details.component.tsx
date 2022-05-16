@@ -6,7 +6,7 @@ import { MAINNET_NETWORK_ID, NETWORK_TO_NAME_MAP } from 'src/utils/constants';
 import { getContractAddress, getStatus, getType, formatCurrency } from 'src/utils/utils';
 
 
-export function ReceiptDetails({ options, receipt, callResult }: any) {
+export function ReceiptDetails({ options, receipt, rawReturnValue }: any) {
 
   const networkId = options.options.chain.networkId;
   const networkName = NETWORK_TO_NAME_MAP[networkId];
@@ -18,17 +18,22 @@ export function ReceiptDetails({ options, receipt, callResult }: any) {
     cost = formatCurrency(gasUsed * gasPriceInt, tokenName);
     gasPrice = formatCurrency(gasPriceInt,tokenName);
   }
-  
-  return (<Box className={styles.receiptDetails}>
+
+  return (
+  <Box className={styles.receiptDetails}>
     <Box className={styles.header}>Transaction</Box>
     <ReceiptBreakdownRow label="Status" value={getStatus(receipt?.status)} />
     <ReceiptBreakdownRow label="Type" value={getType(receipt?.type)} />
-    <ReceiptBreakdownRow label="Result" value={callResult || "Loading..."} />
     <ReceiptBreakdownRow label="Contract Address" value={getContractAddress(receipt?.contractAddress)} />
 
     <Box className={styles.header}>Gas</Box>
     <ReceiptBreakdownRow label="Gas Used" value={gasUsed || "Loading..."} />
     <ReceiptBreakdownRow label="Gas Price" value={gasPrice || "Loading..."} />
     <ReceiptBreakdownRow label="Gas Cost" value={cost || "Loading..."} />
-  </Box>)
+
+
+    <Box className={styles.header}>Raw Result</Box>
+    <Text fontSize="sm" className={styles.dataBlock}>{rawReturnValue || "Loading..."}</Text>
+  </Box>
+  )
 }

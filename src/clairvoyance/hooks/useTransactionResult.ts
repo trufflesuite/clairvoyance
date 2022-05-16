@@ -1,24 +1,26 @@
 import { useEffect } from "react";
 import useSWR from "swr/immutable";
 
-export const useTransactionResult = ({provider, block, transaction}: any) => {
+export const useTransactionResult = ({provider, block, transaction, transactionDecoding, decoder}: any) => {
   const {data, mutate} = useSWR(`/transaction-result`, async () => {
-    if(!provider || !block) return;
-    let callResult = "";
+    if(!provider || !block || !decoder) return;
+    let rawResult = "";
     try{
-      callResult = await provider.request({method: "eth_call", params: [transaction, block.number]});
+      rawResult = await provider.request({method: "eth_call", params: [transaction, block.number]});
     } catch(e: any) {
-      callResult = e.message;
+      rawResult = e.message;
     }
-    return callResult;
+    const contractInstanceDecoder = await decoder.forAddress(transaction.to);
+    const [decodedResult] = await contractInstanceDecoder.decodeReturnValue(transactionDecoding.abi, rawResult, {block: block.number});
+    return {decoding: decodedResult, rawResult};
     
   });
 
   useEffect(() => {
-    if (provider || block) {
+    if (provider && block && decoder) {
       mutate();
     }
-  }, [provider, block]);
+  }, [provider, block, decoder, mutate]);
 
-  return { callResult: data };
+  return { returnValueDecoding: data?.decoding, rawReturnValue: data?.rawResult };
 };
