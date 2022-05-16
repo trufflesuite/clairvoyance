@@ -5,6 +5,8 @@ import * as Codec from '@truffle/codec';
 import Address from './components/decoding/address';
 import { TreeItem } from './transaction-decoding.util';
 import styles from "./transaction-decoding.module.css";
+import { NetworkContext } from "../contexts/network.context"
+
 
 const OPEN_GROUP_CHAR_MAP:any = {
   array: "[",

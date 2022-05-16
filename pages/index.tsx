@@ -12,7 +12,7 @@ import truffleLogo from './truffle-logomark.svg';
 import truffleWord from './truffle-wordmark-dark.svg';
 import metamaskLogo from './MetaMask.svg';
 import ganacheLogo from "./ganache-logo-h-dark.svg"
-
+import { NetworkProvider } from "../src/contexts/network.context";
 
 function getOptions(query: ParsedUrlQuery): Options{
   let options = {} as unknown as Options;
@@ -37,10 +37,10 @@ function getOptions(query: ParsedUrlQuery): Options{
       tx.gasLimit = tx.gasLimit || tx.gas;
 
       options.tx = TransactionFactory.fromTxData(tx, {common});
-      options.from = tx.from;
+      options.from = tx.from.toLowerCase();
       options.networkId = networkId;
       options.chainId = chainId;
-      options.to = options.tx.to!.toString();
+      options.to = options.tx.to!.toString().toLowerCase();
       options.options = {
         //logging: {logger:{log: () => {}}},
         fork: {
@@ -75,30 +75,32 @@ const Home: NextPage = () => {
   const options = getOptions(router.query);
 
   return (
-    <div suppressHydrationWarning={true} className={styles.container}>
-      <Head>
-        <title>Clairvoyance</title>
-      </Head>
-      <Box className="logos">
-        <img src={metamaskLogo.src} style={{display:"inline-block"}} height="30" width="162" />
-        <div className="right" style={{height:"30px",display: "flex", alignItems: "center"}}>
-          <img style={{height:"12px", marginRight:"8px"}} src={truffleWord.src} />
-          <img style={{height:"30px"}} src={truffleLogo.src} />
-        </div>
-      </Box>
-      <Box className="main">
-        <Clairvoyance options={options} />
-      </Box>
-      <Box style={{textAlign:"center", padding:"1em 0"}}>
-      <div style={{color:"#5E464D", fontSize:".6em"}}>
-          <em>simulation made possible by:</em>
-        </div>
-        <img alt="Ganache" style={{height:"32px",      display: "inline-block"}} src={ganacheLogo.src} />
-        <div style={{color:"#5E464D", marginTop:"-.7em", fontSize:".6em"}}>
-          <em>forking in the browser</em>
-        </div>
-      </Box>
-    </div>
+    <NetworkProvider initialState={options}>
+      <div suppressHydrationWarning={true} className={styles.container}>
+        <Head>
+          <title>Clairvoyance</title>
+        </Head>
+        <Box className="logos">
+          <img src={metamaskLogo.src} style={{display:"inline-block"}} height="30" width="162" />
+          <div className="right" style={{height:"30px",display: "flex", alignItems: "center"}}>
+            <img style={{height:"12px", marginRight:"8px"}} src={truffleWord.src} />
+            <img style={{height:"30px"}} src={truffleLogo.src} />
+          </div>
+        </Box>
+        <Box className="main">
+          <Clairvoyance options={options} />
+        </Box>
+        <Box style={{textAlign:"center", padding:"1em 0"}}>
+        <div style={{color:"#5E464D", fontSize:".6em"}}>
+            <em>simulation made possible by:</em>
+          </div>
+          <img alt="Ganache" style={{height:"32px",      display: "inline-block"}} src={ganacheLogo.src} />
+          <div style={{color:"#5E464D", marginTop:"-.7em", fontSize:".6em"}}>
+            <em>forking in the browser</em>
+          </div>
+        </Box>
+      </div>
+    </NetworkProvider>
   )
 }
 
