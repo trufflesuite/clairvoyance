@@ -20,6 +20,7 @@ export function TransactionSimulation({ receipt, returnValueDecoding, options, b
   return (<div>
     <Chakra.Heading fontSize="larger" className={styles.header}>Receipt Details</Chakra.Heading>
     <ReceiptDetails receipt={receipt} rawReturnValue={rawReturnValue} options={options}/>
+    <Chakra.Box className={styles.header}>Decoded Result</Chakra.Box>
     {returnValueDecoding ? <Chakra.Text className={styles.dataBlock}>{inspect(new Codec.Export.ReturndataDecodingInspector(returnValueDecoding))}</Chakra.Text> : <Chakra.Text className={styles.dataBlock}>Loading...</Chakra.Text>}
     <Chakra.Heading fontSize="larger" className={styles.header}>Balance Summary</Chakra.Heading>
     <BalanceSummary receipt={receipt} balances={balances} options={options}/>
