@@ -2,7 +2,8 @@ const NETWORK_ID_TO_URL_PREFIX_MAP: any = {
   1: "https://etherscan.io/address/",
   3: "https://ropsten.etherscan.io/address/",
   4: "https://rinkeby.etherscan.io/address/",
-  5: "https://goerli.etherscan.io/address/"
+  5: "https://goerli.etherscan.io/address/",
+  42: "https://kovan.etherscan.io/address/"
 };
 
 export const useEtherscanAddressUrl = (networkId: number, address: string) => {
