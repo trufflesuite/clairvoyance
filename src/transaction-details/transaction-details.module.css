@@ -25,3 +25,11 @@
   background-color:#eee;
   padding:10px 20px;
 }
+
+.etherscanLink {
+  color:#3498db;;
+}
+
+.etherscanLink:hover {
+  text-decoration: underline;
+}
