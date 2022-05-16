@@ -7,6 +7,7 @@ import { Options } from '../types/types';
 import { useGanache } from './hooks/useGanache';
 import { useDecoder } from './hooks/useDecoder';
 import { useBalances } from './hooks/useBalances';
+import { useTransactionDecoding } from './hooks/useTransactionDecoding';
 import { useTransactionResult } from './hooks/useTransactionResult';
 import { useProgress } from "src/transaction-simulation/hooks/useProgress";
 import { useTransactionReceipt } from "src/transaction-simulation/hooks/useTransactionReceipt";
@@ -36,7 +37,8 @@ export function Clairvoyance({ options }: {options: Options}){
   const transaction = makeTx(options.from, options.tx);
   const {receipt, error} = useTransactionReceipt({provider, transaction})
   const {block} = useBlock({provider, blockNumber: options.options.fork.blockNumber});
-  const {callResult} = useTransactionResult({provider, block, transaction});
+  const transactionDecoding = useTransactionDecoding({decoder, from: options.from, tx: options.tx});
+  const {returnValueDecoding, rawReturnValue} = useTransactionResult({provider, block, transaction, transactionDecoding: transactionDecoding.decoding, decoder});
   const balances = useBalances({receipt, provider, block});
 
   const addresses: string[] = receipt ? Array.from(new Set([
@@ -76,10 +78,10 @@ export function Clairvoyance({ options }: {options: Options}){
           <Chakra.TabPanel>
             <Chakra.Heading fontSize="larger">Transaction Details</Chakra.Heading>
             <TransactionDetails options={options.options} from={options.from} tx={options.tx} provider={provider} />
-            <TransactionDecoding decoder={decoder} provider={provider} options={options.options} from={options.from} tx={options.tx} networkId={options.networkId} />
+            <TransactionDecoding decoding={transactionDecoding} label="Decoded Data"/>
           </Chakra.TabPanel>
           <Chakra.TabPanel>
-            <TransactionSimulation decoder={eventDecoder} receipt={receipt} callResult={callResult} options={options} balances={balances}/>
+            <TransactionSimulation decoder={eventDecoder} receipt={receipt} returnValueDecoding={returnValueDecoding} options={options} balances={balances} rawReturnValue={rawReturnValue}/>
           </Chakra.TabPanel>
           <Chakra.TabPanel>
             <Events decoder={eventDecoder} events={receipt?.logs || null} />

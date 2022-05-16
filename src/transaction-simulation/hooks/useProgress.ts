@@ -10,7 +10,6 @@ export const useProgress = ({provider}: {provider: EthereumProvider | null}) => 
     if(!provider) return;
     await provider.request({method: "eth_subscribe", params: ["newHeads"]});
     return provider.on("ganache:vm:tx:step", (event: any) => {
-      console.log(event.data);
       setProgress(event.data);
     });
   });
