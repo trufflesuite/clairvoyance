@@ -48,7 +48,7 @@ export function Decoding({ decoding, showSignature }: {showSignature: boolean,  
                 <div>
                   {value.map((itemValue: any, index: any) => {
                     return (
-                      <div>
+                      <div key={index}>
                         {renderLeaf({
                           typeClass: itemValue.type?.typeClass,
                           value: itemValue.value,
@@ -130,7 +130,7 @@ function renderSignature(contractName: string, name: string, args: any[]) {
     <span className={styles.keyword}>function</span> <span className={styles.title}>{contractName}</span>.<span className={styles.title}>{name}</span>(
     <span className={styles.args}>
       {args.map((arg, i) => 
-        <span><span className={styles.keyword}>{arg.typeClass}</span> {arg.name}{(i === args.length - 1) ? "": ", "}</span> 
+        <span key={i}><span className={styles.keyword}>{arg.typeClass}</span> {arg.name}{(i === args.length - 1) ? "": ", "}</span> 
       )})
     </span>
   </span>;
